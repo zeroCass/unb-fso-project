@@ -1,4 +1,4 @@
-# Projeto Final de FSO Unb (Fudamento de Sistemas Opercionais)
+# Projeto Final de FSO Unb (Fundamentos de Sistemas Operacionais)
 
 ## Instalação
 
