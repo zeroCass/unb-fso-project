@@ -37,7 +37,7 @@ Crie e configure o arquivo .env de acordo com exemplo .env.sample
 
 ### Backend
 
-```C
+```bash
 cd backend
 
 python .\manage.py runserver
@@ -45,7 +45,7 @@ python .\manage.py runserver
 
 ### Frontend
 
-```C
+```bash
 cd frontend
 
 npm run dev

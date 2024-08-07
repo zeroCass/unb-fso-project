@@ -10,7 +10,9 @@
 *.sqlite3
 __pycache__
 static/
-migrations/
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
 
 #others
 .vscode
