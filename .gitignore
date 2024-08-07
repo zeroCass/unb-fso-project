@@ -1,0 +1,16 @@
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+
+
+# back-end
+*.sqlite3
+__pycache__
+static/
+migrations/
+
+#others
+.vscode
