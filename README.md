@@ -4,7 +4,7 @@
 
 ### Backend
 
-```C
+```bash
 cd backend
 
 # Download pacotes necessários
@@ -24,7 +24,7 @@ py manage.py loaddata fixture
 
 ### Frontend
 
-```C
+```bash
 cd frontend
 
 # Download pacotes necessários
