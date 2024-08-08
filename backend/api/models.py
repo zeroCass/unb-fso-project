@@ -13,27 +13,24 @@ from abc import abstractmethod
 class Turno(models.TextChoices):
     MATUTINO = 'MAT', _('Matutino')
     VESPERTINO = 'VES', _('Vespertino')
-
-# Enum para as trilhas (apenas como exemplo)
-
-
+    
 class Trilha(models.TextChoices):
+    ENEGRESER = 'ENEGRESER', _('ENEGRE-SER')
+    DNMEV = 'DNMEV', _('DINHEIRO NA MÃO É VENDAVAL')
+    AMN = 'AMN', _('ADMIRÁVEL MUNDO NOVO')
+    AGRO = 'AGRO', _('AGROECOLOGIA')
 
-    ENEGRESER = 1, _('ENEGRE-SER')
-    DNMEV = 2, _('DINHEIRO NA MÃO É VENDAVAL')
-    AMN = 3, _('ADMIRÁVEL MUNDO NOVO')
 
 
-# Enum para as turmas
 class NomeTurma(models.TextChoices):
-    A = 1,  _('A')
-    B = 2,  _('B')
-    C = 3,  _('C')
-    D = 4, _('D')
-    E = 5, _('E')
-    F = 6, _('F')
-    G = 7, _('G')
-    H = 8, _('H')
+    A = 'A', _('A')
+    B = 'B', _('B')
+    C = 'C', _('C')
+    D = 'D', _('D')
+    E = 'E', _('E')
+    F = 'F', _('F')
+    G = 'G', _('G')
+    H = 'H', _('H')
 
 
 # Classe Usuário (Abstrata) - Possui CPF e Nome
@@ -60,9 +57,7 @@ class Aluno(Usuario):
         'Turma', on_delete=models.SET_NULL, null=True, blank=True)
 
     def login(self, cpf):
-        if cpf == self.cpf:
-            return True
-        return False
+        pass
 
     def escolherTurno(self, turno):
         pass
@@ -82,16 +77,12 @@ class Administrador(Usuario):
     senha = models.CharField(max_length=128)
 
     def login(self, cpf, senha):
-        if (cpf == self.cpf) and (senha == self.senha):
-            return True
-        return False
+       pass
 
-    def cadastrarAlunos(self, alunos):
-        # Lógica para cadastrar alunos
+    def cadastrarAluno(self, aluno):
         pass
 
     def consultarRelatório(self):
-        # Lógica para consultar relatórios
         pass
 
 # Classe Turma
@@ -99,25 +90,16 @@ class Administrador(Usuario):
 
 class Turma(models.Model):
     nome = models.CharField(
-        max_length=1, choices=NomeTurma.choices, unique=True)
+        max_length=255, choices=NomeTurma.choices, unique=True)
     turno = models.CharField(max_length=3, choices=Turno.choices)
-    trilha = models.CharField(max_length=3, choices=Trilha.choices)
+    trilha = models.CharField(max_length=255, choices=Trilha.choices)
     capacidadeMaxima = models.PositiveIntegerField()
     capacidadeAtual = models.PositiveIntegerField(default=0)
 
     def verificarVagas(self):
-        return self.capacidadeAtual < self.capacidadeMaxima
-
+        pass
     def reservarVagas(self, quantidade):
-        if self.verificarVagas() and self.capacidadeAtual + quantidade <= self.capacidadeMaxima:
-            self.capacidadeAtual += quantidade
-            self.save()
-            return True
-        return False
+        pass
 
     def atualizarCapacidade(self, nova_capacidade):
-        if nova_capacidade >= self.capacidadeAtual:
-            self.capacidadeMaxima = nova_capacidade
-            self.save()
-            return True
-        return False
+        pass
