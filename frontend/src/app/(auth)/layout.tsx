@@ -1,6 +1,5 @@
-import { UserContextProvider } from "@/context/userContext";
 import type { Metadata } from "next";
-import "./globals.css";
+import "../globals.css";
 
 export const metadata: Metadata = {
 	title: "FSO Project",
@@ -12,11 +11,5 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	return (
-		<html lang="pt-BR">
-			<body>
-				<UserContextProvider>{children}</UserContextProvider>
-			</body>
-		</html>
-	);
+	return <main>{children}</main>;
 }
