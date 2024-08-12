@@ -1,10 +1,11 @@
-import LoginForm from "@/components/login/loginForm";
+import Page from "@/components/login/_loginForm";
 
-export default function LoginPage() {
+export default async function LoginPage() {
 	return (
 		<section>
 			<h1>Login Page</h1>
-			<LoginForm />
+			{/* <LoginForm /> */}
+			<Page />
 		</section>
 	);
 }

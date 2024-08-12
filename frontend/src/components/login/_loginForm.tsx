@@ -12,7 +12,7 @@ export default async function Page() {
 					redirect("/");
 				}}
 			>
-				<input type="email" name="email" placeholder="Email" />
+				<input type="email" placeholder="Email" />
 				<br />
 				<button type="submit">Login</button>
 			</form>

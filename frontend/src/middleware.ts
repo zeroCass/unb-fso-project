@@ -1,27 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
+// import { NextRequest, NextResponse } from "next/server";
+// import routes from "./lib/routes";
 
-export const routes = {
-	protectedRoutes: ["/"],
-	authRoutes: ["/login"],
-};
+// export async function middleware(request: NextRequest) {
+// 	const token = request.cookies.get("session")?.value;
+// 	const currentPath = request.nextUrl.pathname;
 
-export function middleware(request: NextRequest) {
-	const token = request.cookies.get("token")?.value;
+// 	// needed to be sure if token is valid (jwt)
+// 	const authenticaded = token ? true : false;
+// 	console.warn("autenticated/token: ", authenticaded, token);
 
-	const currentPath = request.nextUrl.pathname;
+// 	const isProctedRoute = routes.protectedRoutes.includes(currentPath);
+// 	if (!authenticaded && isProctedRoute) {
+// 		console.warn("is not autenticated");
+// 		return NextResponse.redirect(new URL("/login", request.nextUrl));
+// 	}
 
-	// needed to be sure if token is valid (jwt)
-	const authenticaded = token ? true : false;
+// 	const isAuthRoute = routes.authRoutes.includes(currentPath);
+// 	if (authenticaded && isAuthRoute) {
+// 		console.warn("it is autenticated already");
+// 		return NextResponse.redirect(new URL("/", request.nextUrl));
+// 	}
 
-	const isProctedRoute = routes.protectedRoutes.includes(currentPath);
-	if (!authenticaded && isProctedRoute) {
-		return NextResponse.redirect(new URL("/login", request.nextUrl));
-	}
+// 	return NextResponse.next();
+// }
 
-	const isAuthRoute = routes.authRoutes.includes(currentPath);
-	if (authenticaded && isAuthRoute) {
-		return NextResponse.redirect(new URL("/", request.nextUrl));
-	}
+import { NextRequest } from "next/server";
+import { updateSession } from "./lib/_session";
 
-	return NextResponse.next();
+export async function middleware(request: NextRequest) {
+	console.log("entrou midleware");
+	return await updateSession(request);
 }

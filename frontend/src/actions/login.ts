@@ -9,25 +9,27 @@ export async function login(state, formData) {
 
 	try {
 		// 2 - recebe os dados
+		const data = {
+			name: "Jão das Neves",
+			cpf: formData.get("cpf"),
+			role: "aluno",
+		};
 
 		// 3 - armazena nos cookies
-		cookies().set("token", formData.get("cpf"), {
-			httpOnly: true,
-			secure: true,
-			maxAge: 60 * 10,
-		});
+		// await createSession(JSON.parse(data));
+		cookies().set("session", formData.cpf);
+		console.log("session created");
+
 		return {
 			sucess: true,
+			data: data,
 			error: null,
 		};
 	} catch (error) {
 		return {
 			sucess: false,
+			data: null,
 			error: error.message,
 		};
 	}
-}
-
-export async function logout() {
-	cookies().delete("token");
 }
