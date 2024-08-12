@@ -6,22 +6,18 @@ from abc import abstractmethod
 
 
 # Turno, Trilha e Nome da Turma são Enums:
-# Utilizando Enums e TextChoices por serem ideais para criar campos de escolha, podendo ser alterados facilmente
+# Utilizando TextChoices por serem ideais para criar campos de escolha, podendo ser alterados facilmente
 # ao se adicionar ou remover turnos, trilhas ou turmas.
 
 
 class Turno(models.TextChoices):
     MATUTINO = 'MAT', _('Matutino')
     VESPERTINO = 'VES', _('Vespertino')
-    
 class Trilha(models.TextChoices):
     ENEGRESER = 'ENEGRESER', _('ENEGRE-SER')
     DNMEV = 'DNMEV', _('DINHEIRO NA MÃO É VENDAVAL')
     AMN = 'AMN', _('ADMIRÁVEL MUNDO NOVO')
     AGRO = 'AGRO', _('AGROECOLOGIA')
-
-
-
 class NomeTurma(models.TextChoices):
     A = 'A', _('A')
     B = 'B', _('B')
@@ -35,7 +31,7 @@ class NomeTurma(models.TextChoices):
 
 # Classe Usuário (Abstrata) - Possui CPF e Nome
 
-class Usuario(AbstractBaseUser):
+class Usuario(models.Model):
     cpf = models.CharField(max_length=11, unique=True)
     nome = models.CharField(max_length=255)
 
@@ -44,11 +40,13 @@ class Usuario(AbstractBaseUser):
 
     class Meta:
         abstract = True
+ 
 
     @abstractmethod  # login para aluno e admin são diferentes
     def login(self):
         pass
-
+    def __str__(self) -> str:
+        return str((self.nome, self.cpf))
 # Classe Aluno (Herda de Usuário)
 
 
@@ -100,6 +98,5 @@ class Turma(models.Model):
         pass
     def reservarVagas(self, quantidade):
         pass
-
     def atualizarCapacidade(self, nova_capacidade):
         pass
