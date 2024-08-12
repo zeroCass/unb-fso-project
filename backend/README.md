@@ -9,5 +9,13 @@
          ``
 
 
+### API Endpoints:
+      'GET ALL Alunos': '/api/aluno/all/',
+      'Add Aluno': '/api/aluno/create',
+      'Update Aluno': '/api/aluno/update/pk',
+      'Delete Aluno': '/api/aluno/delete/pk',
 
-1- added readme
+      'Get All admins': '/api/admin/all',
+      'Add Admin': '/api/admin/create',
+      'Update Admin': '/api/admin/update/pk',
+      'Delete Admin': '/api/admin/delete/pk',
