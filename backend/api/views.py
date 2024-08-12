@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Aluno, Administrador
-from .serializers import AlunoSerializer, AdministradorSerializer
+from .models import Aluno, Administrador, Turma
+from .serializers import AlunoSerializer, AdministradorSerializer, TurmaSerializer
 from rest_framework import serializers
 from rest_framework import status
 from django.shortcuts import get_object_or_404
@@ -19,13 +19,17 @@ def ApiOverview(request):
         'Add Admin': '/admin/create',
         'Update Admin': '/admin/update/pk',
         'Delete Admin': '/admin/delete/pk',
+
+        'Get All Turma': '/turma/all',
+        'Add Turma': '/turma/create',
+        'Update Turma': '/turma/update/pk',
+        'Delete Turma': '/turma/delete/pk',
     }
 
     return Response(api_urls)
 
 
 # ALUNO CRUD:
-
 # create aluno
 @api_view(['POST'])
 def create_aluno(request):
@@ -76,7 +80,6 @@ def delete_aluno(request, pk):
 
 
 # ADMIN CRUD (to be changed )
-
 # create admin
 @api_view(['POST'])
 def create_administrador(request):
@@ -93,7 +96,6 @@ def create_administrador(request):
         return Response(administrador.data)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND, data="Um administrador com esse CPF já foi cadastrado ou Os parâmetros enviados estão errados.")
-    
 # get all administradores
 @api_view(['GET'])
 def view_administradores(request):
@@ -126,3 +128,54 @@ def delete_administrador(request, pk):
     administrador.delete()
     return Response(status=status.HTTP_202_ACCEPTED, data="Admin deletado com sucesso.")
 
+# TURMA CRUD
+
+# create turma
+@api_view(['POST'])
+def create_turma(request):
+    turma = TurmaSerializer(data=request.data)
+    print('request data:', request.data)
+    print(turma)
+    # validating for already existing data
+    if Turma.objects.filter(**request.data).exists():
+        print(request.data)
+        raise serializers.ValidationError('Uma turma com esse nome já foi cadastrado ou Os parâmetros enviados estão errados.')
+
+    if turma.is_valid():
+        turma.save()
+        return Response(turma.data)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND, data="Uma turma com esse nome já foi cadastrado ou Os parâmetros enviados estão errados.")
+# get all turmas
+@api_view(['GET'])
+def view_turma(request):
+    # checking for the parameters from the URL
+    if request.query_params:
+        turma = Turma.objects.filter(**request.query_params.dict())
+    else:
+        turma = Turma.objects.all()
+
+    # if there is something in turma else raise error
+    if turma:
+        serializer = TurmaSerializer(turma, many=True)
+        return Response(serializer.data)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND, data="Nenhuma turma cadastrada.")
+
+# UPDATE TURMA
+@api_view(['PUT'])
+def update_turma(request, pk):
+    turma = Turma.objects.get(pk=pk)
+    data = TurmaSerializer(instance=turma, data=request.data)
+    if data.is_valid():
+        data.save()
+        return Response(data.data)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+# delete turma
+@api_view(['DELETE'])
+def delete_turma(request, pk):
+    turma = get_object_or_404(Turma, pk=pk)
+    turma.delete()
+    return Response(status=status.HTTP_202_ACCEPTED, data="Turma deletado com sucesso.")

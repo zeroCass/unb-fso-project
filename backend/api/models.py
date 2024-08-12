@@ -91,8 +91,8 @@ class Turma(models.Model):
         max_length=255, choices=NomeTurma.choices, unique=True)
     turno = models.CharField(max_length=3, choices=Turno.choices)
     trilha = models.CharField(max_length=255, choices=Trilha.choices)
-    capacidadeMaxima = models.PositiveIntegerField()
-    capacidadeAtual = models.PositiveIntegerField(default=0)
+    capacidadeMaxima = models.PositiveIntegerField(default=30)
+    capacidadeAtual = models.PositiveIntegerField(default=30)
 
     def verificarVagas(self):
         pass
