@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Aluno, Administrador, Turma
+from .models import Aluno, Administrador, Turma, Turno, Trilha, NomeTurma
 from .serializers import AlunoSerializer, AdministradorSerializer, TurmaSerializer
 from rest_framework import serializers
 from rest_framework import status
@@ -24,6 +24,11 @@ def ApiOverview(request):
         'Add Turma': '/turma/create',
         'Update Turma': '/turma/update/pk',
         'Delete Turma': '/turma/delete/pk',
+
+        'Get Turnos': '/turnos',
+        'Get Trilhas': '/trilhas',
+        'Get Nome Turma': '/nomes_turma'
+
     }
 
     return Response(api_urls)
@@ -129,7 +134,6 @@ def delete_administrador(request, pk):
     return Response(status=status.HTTP_202_ACCEPTED, data="Admin deletado com sucesso.")
 
 # TURMA CRUD
-
 # create turma
 @api_view(['POST'])
 def create_turma(request):
@@ -161,7 +165,6 @@ def view_turma(request):
         return Response(serializer.data)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND, data="Nenhuma turma cadastrada.")
-
 # UPDATE TURMA
 @api_view(['PUT'])
 def update_turma(request, pk):
@@ -172,10 +175,27 @@ def update_turma(request, pk):
         return Response(data.data)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
 # delete turma
 @api_view(['DELETE'])
 def delete_turma(request, pk):
     turma = get_object_or_404(Turma, pk=pk)
     turma.delete()
     return Response(status=status.HTTP_202_ACCEPTED, data="Turma deletado com sucesso.")
+
+
+
+# get Turnos
+@api_view(['GET'])
+def get_turnos(request):
+    turno_dict = {key: label for key, label in Turno.choices}
+    return Response(data=turno_dict)
+#get nome das turmas
+@api_view(['GET'])
+def get_nome_turma(request):
+    nome_turma_dict = {key: label for key, label in NomeTurma.choices}
+    return Response(data=nome_turma_dict)
+# get trilhas
+@api_view(['GET'])
+def get_trilhas(request):
+    trilha_dict = {key: label for key, label in Trilha.choices}
+    return Response(data=trilha_dict)

@@ -19,3 +19,20 @@
       'Add Admin': '/api/admin/create',
       'Update Admin': '/api/admin/update/pk',
       'Delete Admin': '/api/admin/delete/pk',
+
+      
+      'Get All Turmas': '/api/admin/all',
+      'Add Turma': '/api/turma/create',
+      'Update Turma': '/api/turma/update/pk',
+      'Delete Turma': '/api/turma/delete/pk',
+
+
+      'GET TURNOS' : 'api/turnos',
+      'GET TRILHAS' : 'api/trilhas',
+      'GET NOME DAS TURMAS' : 'api/nomes_turma',
+
+
+
+
+
+OBS.: Mudar turma pra ter ano e nome, ambos nao sao unicos

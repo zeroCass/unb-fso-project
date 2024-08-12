@@ -28,5 +28,11 @@ urlpatterns = [
     path('turma/delete/<int:pk>/',
          views.delete_turma, name='delete-turma'),
 
+     # get all turnos
+    path('turnos', views.get_turnos, name='get-turno'),
+    path('nomes_turma', views.get_nome_turma, name='get-turno'),
+    path('trilhas', views.get_trilhas, name='get-turno'),
+
+
 
 ]
