@@ -1,19 +1,15 @@
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 
-from abc import abstractmethod
-
-
-# Turno, Trilha e Nome da Turma são Enums:
-# Utilizando TextChoices por serem ideais para criar campos de escolha, podendo ser alterados facilmente
-# ao se adicionar ou remover turnos, trilhas ou turmas.
+from .managers import UsuarioManager
 
 
 
 class Role(models.TextChoices):
     ADMIN = 'ADMIN', _('Administrador')
     ALUNO = 'ALUNO', _('Aluno')
+
 
 class Turno(models.TextChoices):
     MATUTINO = 'MAT', _('Matutino')
@@ -34,61 +30,26 @@ class NomeTurma(models.TextChoices):
     H = 'H', _('H')
 
 
-# Classe Usuário (Abstrata) - Possui CPF e Nome
 
-class Usuario(models.Model):
+# user base class
+class Usuario(AbstractBaseUser, PermissionsMixin):
     cpf = models.CharField(max_length=11, unique=True)
     nome = models.CharField(max_length=255)
-    role =  models.CharField(max_length=255, choices=Role.choices, default='ALUNO')
+    role = models.CharField(max_length=255, choices=Role.choices, default='ALUNO')
+    
     USERNAME_FIELD = 'cpf'
     REQUIRED_FIELDS = ['nome', 'role']
 
-    class Meta:
-        abstract = True
- 
+    objects = UsuarioManager()
 
-    @abstractmethod  # login para aluno e admin são diferentes
-    def login(self):
-        pass
-    def __str__(self) -> str:
-        return str((self.nome, self.cpf, self.role))
-# Classe Aluno (Herda de Usuário)
-
-
+    def __str__(self):
+        return f"{self.nome} ({self.cpf}) - {self.role}"
+    
 class Aluno(Usuario):
     turma = models.ForeignKey(
         'Turma', on_delete=models.SET_NULL, null=True, blank=True)
 
-    def login(self, cpf):
-        pass
 
-    def escolherTurno(self, turno):
-        pass
-
-    def escolherTrilha(self, trilha):
-        pass
-
-    def realizarMatricula(self):
-        pass
-
-    def visualizarMatricula(self):
-        pass
-
-
-# Classe Administrador (Herda de Usuário)
-class Administrador(Usuario):
-    senha = models.CharField(max_length=128)
-
-    def login(self, cpf, senha):
-       pass
-
-    def cadastrarAluno(self, aluno):
-        pass
-
-    def consultarRelatório(self):
-        pass
-
-# Classe Turma
 
 
 class Turma(models.Model):
