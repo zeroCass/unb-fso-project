@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Aluno, Administrador, Turma
+from .models import Aluno, Usuario, Turma
 
 
 class TurmaSerializer(serializers.ModelSerializer): 
@@ -16,8 +16,8 @@ class AlunoSerializer(serializers.ModelSerializer):
         model = Aluno
         fields = ('id', 'cpf', 'nome', 'turma', 'role')
     
-class AdministradorSerializer(serializers.ModelSerializer):
-    # turma = TurmaSerializer(read_only=True) 
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
     class Meta:
-        model = Administrador
-        fields = ('id', 'cpf', 'nome', 'senha', 'role')
+        model = Usuario
+        fields = ('cpf', 'nome', 'password')
