@@ -1,20 +1,15 @@
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 
-from abc import abstractmethod
-from django.contrib.auth.models import AbstractUser
-
-
-# Turno, Trilha e Nome da Turma são Enums:
-# Utilizando TextChoices por serem ideais para criar campos de escolha, podendo ser alterados facilmente
-# ao se adicionar ou remover turnos, trilhas ou turmas.
+from .managers import UsuarioManager
 
 
 
 class Role(models.TextChoices):
     ADMIN = 'ADMIN', _('Administrador')
     ALUNO = 'ALUNO', _('Aluno')
+
 
 class Turno(models.TextChoices):
     MATUTINO = 'MAT', _('Matutino')
@@ -35,31 +30,26 @@ class NomeTurma(models.TextChoices):
     H = 'H', _('H')
 
 
-# Classe Usuário (Abstrata) - Possui CPF e Nome
 
-class Usuario(AbstractUser):
+# user base class
+class Usuario(AbstractBaseUser, PermissionsMixin):
     cpf = models.CharField(max_length=11, unique=True)
     nome = models.CharField(max_length=255)
-    role =  models.CharField(max_length=255, choices=Role.choices, default='ALUNO')
+    role = models.CharField(max_length=255, choices=Role.choices, default='ALUNO')
+    
     USERNAME_FIELD = 'cpf'
     REQUIRED_FIELDS = ['nome', 'role']
 
-    class Meta:
-        abstract = False
-    def __str__(self) -> str:
-        return str((self.nome, self.cpf, self.role))
+    objects = UsuarioManager()
 
-
-
-
-# Classe Aluno (Herda de Usuário)
+    def __str__(self):
+        return f"{self.nome} ({self.cpf}) - {self.role}"
+    
 class Aluno(Usuario):
     turma = models.ForeignKey(
         'Turma', on_delete=models.SET_NULL, null=True, blank=True)
 
 
-
-# Classe Turma
 
 
 class Turma(models.Model):
