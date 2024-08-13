@@ -30,6 +30,8 @@
       'GET TURNOS' : 'api/turnos',
       'GET TRILHAS' : 'api/trilhas',
       'GET NOME DAS TURMAS' : 'api/nomes_turma',
+      'GET Roles' : 'api/roles',
+
 
 
 

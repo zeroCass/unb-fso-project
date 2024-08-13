@@ -10,6 +10,11 @@ from abc import abstractmethod
 # ao se adicionar ou remover turnos, trilhas ou turmas.
 
 
+
+class Role(models.TextChoices):
+    ADMIN = 'ADMIN', _('Administrador')
+    ALUNO = 'ALUNO', _('Aluno')
+
 class Turno(models.TextChoices):
     MATUTINO = 'MAT', _('Matutino')
     VESPERTINO = 'VES', _('Vespertino')
@@ -34,9 +39,9 @@ class NomeTurma(models.TextChoices):
 class Usuario(models.Model):
     cpf = models.CharField(max_length=11, unique=True)
     nome = models.CharField(max_length=255)
-
+    role =  models.CharField(max_length=255, choices=Role.choices, default='ALUNO')
     USERNAME_FIELD = 'cpf'
-    REQUIRED_FIELDS = ['nome']
+    REQUIRED_FIELDS = ['nome', 'role']
 
     class Meta:
         abstract = True
@@ -46,7 +51,7 @@ class Usuario(models.Model):
     def login(self):
         pass
     def __str__(self) -> str:
-        return str((self.nome, self.cpf))
+        return str((self.nome, self.cpf, self.role))
 # Classe Aluno (Herda de Usuário)
 
 
@@ -91,9 +96,15 @@ class Turma(models.Model):
         max_length=255, choices=NomeTurma.choices, unique=True)
     turno = models.CharField(max_length=3, choices=Turno.choices)
     trilha = models.CharField(max_length=255, choices=Trilha.choices)
+    ano = models.PositiveIntegerField(default=1)
     capacidadeMaxima = models.PositiveIntegerField(default=30)
     capacidadeAtual = models.PositiveIntegerField(default=30)
 
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['nome', 'ano'], name='unique_nome_ano')
+        ]
     def verificarVagas(self):
         pass
     def reservarVagas(self, quantidade):

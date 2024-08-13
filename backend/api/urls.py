@@ -30,8 +30,10 @@ urlpatterns = [
 
      # get all turnos
     path('turnos', views.get_turnos, name='get-turno'),
-    path('nomes_turma', views.get_nome_turma, name='get-turno'),
-    path('trilhas', views.get_trilhas, name='get-turno'),
+    path('nomes_turma', views.get_nome_turma, name='get-nome-turma'),
+    path('trilhas', views.get_trilhas, name='get-trilhas'),
+    path('roles', views.get_roles, name='get-role'),
+
 
 
 

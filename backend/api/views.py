@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Aluno, Administrador, Turma, Turno, Trilha, NomeTurma
+from .models import Aluno, Administrador, Turma, Turno, Trilha, NomeTurma, Role
 from .serializers import AlunoSerializer, AdministradorSerializer, TurmaSerializer
 from rest_framework import serializers
 from rest_framework import status
@@ -27,7 +27,9 @@ def ApiOverview(request):
 
         'Get Turnos': '/turnos',
         'Get Trilhas': '/trilhas',
-        'Get Nome Turma': '/nomes_turma'
+        'Get Nome Turma': '/nomes_turma',
+        'Get Roles': '/roles'
+
 
     }
 
@@ -199,3 +201,10 @@ def get_nome_turma(request):
 def get_trilhas(request):
     trilha_dict = {key: label for key, label in Trilha.choices}
     return Response(data=trilha_dict)
+
+#get roles
+@api_view(['GET'])
+def get_roles(request):
+    role_dict = {key: label for key, label in Role.choices}
+    return Response(data=role_dict)
+
