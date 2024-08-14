@@ -1,15 +1,36 @@
-from django.urls import include, path
-from rest_framework import routers
-
+from django.urls import path
 from . import views
 
-router = routers.DefaultRouter()
-router.register(r"fools", views.FooViewSet)
-
-# api_urlpatterns = [
-#     url('api/v1/', include(router.urls)),
-# ]
 
 urlpatterns = [
-    path("", include(router.urls)),
+
+    # auth routes
+    path('register/', views.AdminRegistrationView.as_view(), name='user-register'), #somente para admins
+    path('login/', views.UserLoginView.as_view(), name='user-login'), # login
+    path('logout/', views.UserLogoutView.as_view(),  name='user-logout'),
+
+    # CRIACAO DE ALUNOS (somente admins tem essa permissão):
+    path('aluno/create/', views.AlunoRegistrationView.as_view(),
+         name='aluno-register'),
+    path('aluno/all/', views.view_alunos, name='view_aluno'),
+    path('aluno/update/<int:pk>/', views.update_aluno, name='update-aluno'),
+    path('aluno/delete/<int:pk>/', views.delete_aluno, name='delete-aluno'),
+
+    # turma crud endpoints
+    path('turma/create/', views.create_turma, name='create-turma'),
+    path('turma/all/', views.view_turma, name='view_turma'),
+    path('turma/update/<int:pk>/',
+         views.update_turma, name='update-turma'),
+    path('turma/delete/<int:pk>/',
+         views.delete_turma, name='delete-turma'),
+
+
+    path('user/', views.get_user, name='get-user')
+
+
+
+
+
+
+
 ]
