@@ -1,16 +1,6 @@
 "use client";
+import type { IUserContext, User } from "@/types/types";
 import { createContext, useContext, useEffect, useState } from "react";
-
-export type User = {
-	name: string;
-	cpf: string;
-	role: string;
-};
-
-type IUserContext = {
-	user: User | null;
-	setUser: React.Dispatch<React.SetStateAction<User | null>>;
-};
 
 export const UserContext = createContext<IUserContext | null>(null);
 
