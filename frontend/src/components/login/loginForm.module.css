@@ -31,3 +31,16 @@
 	width: 100%;
 	height: 100%;
 }
+
+.admlogin {
+	margin-top: 15px;
+	text-decoration: underline;
+}
+
+.admPassword {
+	display: none;
+}
+
+.admPassword.hidden {
+	display: block;
+}

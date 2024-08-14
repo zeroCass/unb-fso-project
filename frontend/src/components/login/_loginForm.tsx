@@ -35,6 +35,7 @@ export default async function LoginForm() {
 							placeholder="Password"
 							margin="normal"
 							variant="outlined"
+							className={styles.admPassword}
 						/>
 
 						<Box mt={2}>
@@ -49,6 +50,9 @@ export default async function LoginForm() {
 						</Box>
 					</form>
 				</Box>
+				<Button className={styles.admlogin} variant="text">
+					logar como administrador
+				</Button>
 			</Box>
 		</section>
 	);
