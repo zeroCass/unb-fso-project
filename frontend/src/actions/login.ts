@@ -1,35 +1,36 @@
-// @ts-nocheck
 "use server";
 
+import { encrypt } from "@/lib/_session";
+import { getToken } from "@/lib/getToken";
 import { cookies } from "next/headers";
 
-export async function login(state, formData) {
-	console.warn("dados do form: ", formData.get("cpf"), formData.get("password"));
-	// 1- faz consulta na api
+export default async function login(state: {}, formData: FormData) {
+	const cpf = formData.get("cpf") as string | null;
+	const password = formData.get("password") as string | null;
+	console.warn("cpf: ", cpf);
 
 	try {
-		// 2 - recebe os dados
-		const data = {
-			name: "Jão das Neves",
-			cpf: formData.get("cpf"),
-			role: "aluno",
-		};
+		if (!cpf) throw new Error("Preencha os dados.");
 
-		// 3 - armazena nos cookies
-		// await createSession(JSON.parse(data));
-		cookies().set("session", formData.cpf);
-		console.log("session created");
+		const token = await getToken(cpf, password);
+		// if (!response.ok) throw new Error('Senha ou usuário inválidos.');
+		// const data = await response.json();
+		// cookies().set("session", token, {
+		// 	httpOnly: true,
+		// 	secure: true,
+		// 	sameSite: "lax",
+		// 	maxAge: 60 * 60 * 24,
+		// });
 
-		return {
-			sucess: true,
-			data: data,
-			error: null,
-		};
-	} catch (error) {
-		return {
-			sucess: false,
-			data: null,
-			error: error.message,
-		};
+		// Create the session
+		const expires = new Date(Date.now() + 10 * 60 * 1000);
+		const session = await encrypt({ token, expires });
+
+		// Save the session in a cookie
+		cookies().set("session", session, { expires, httpOnly: true });
+
+		return { sucess: true, data: null, error: null };
+	} catch (error: unknown) {
+		return { sucess: false, data: null, error: "error" };
 	}
 }

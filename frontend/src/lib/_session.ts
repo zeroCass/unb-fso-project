@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "./getToken";
 
 const secretKey = "secret";
 const key = new TextEncoder().encode(secretKey);
@@ -20,20 +21,36 @@ export async function decrypt(input: string): Promise<any> {
 	return payload;
 }
 
-export async function login(formData: FormData) {
-	// Verify credentials && get the user
+export async function login(state: {}, formData: FormData) {
+	try {
+		// Verify credentials && get the user
+		const cpf = formData.get("cpf") ? formData.get("cpf") : "";
+		const password = "123";
+		const token = await getToken(cpf, password);
 
-	const user = { email: formData.get("email"), name: "John" };
+		// Create the session
+		const expires = new Date(Date.now() + 10 * 1000);
+		const session = await encrypt({ token, expires });
 
-	// Create the session
-	const expires = new Date(Date.now() + 10 * 1000);
-	const session = await encrypt({ user, expires });
+		// Save the session in a cookie
+		cookies().set("session", session, { expires, httpOnly: true });
 
-	// Save the session in a cookie
-	cookies().set("session", session, { expires, httpOnly: true });
+		return {
+			sucess: true,
+			data: null,
+			error: null,
+		};
+	} catch (error) {
+		// throw new Error('Falha na Autenticacao')
+		return {
+			sucess: false,
+			data: null,
+			error,
+		};
+	}
 }
 
-export async function logout() {
+export async function deleteSession() {
 	// Destroy the session
 	cookies().set("session", "", { expires: new Date(0) });
 }
@@ -46,11 +63,11 @@ export async function getSession() {
 
 export async function updateSession(request: NextRequest) {
 	const session = request.cookies.get("session")?.value;
-	if (!session) return;
+	if (!session) return false;
 
 	// Refresh the session so it doesn't expire
 	const parsed = await decrypt(session);
-	parsed.expires = new Date(Date.now() + 10 * 1000);
+	parsed.expires = new Date(Date.now() + 10 * 60 * 1000);
 	const res = NextResponse.next();
 	res.cookies.set({
 		name: "session",

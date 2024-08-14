@@ -2,6 +2,8 @@
 *::after,
 *::before {
 	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
 }
 
 html {
@@ -13,10 +15,6 @@ html {
 	--color-light: #edf;
 	--color-dark: #206;
 	--radius: 0.25rem;
-}
-
-body {
-	margin: 1.5rem;
 }
 
 body,

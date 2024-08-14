@@ -1,0 +1,20 @@
+{
+	"usuarios": [
+		{
+			"id": 1,
+			"nome": "Jão das Neves",
+			"cpf": "00000000001",
+			"turma": 1,
+			"role": "aluno"
+		},
+		{
+			"id": 2,
+			"nome": "Igrit Sabe Tudo",
+			"cpf": "0000000002",
+			"role": "administrador"
+		}
+	],
+	"turmas": [
+		{ "nome": "A", "turno": "MAT", "trilha": "DNMEV", "ano": "2024", "capacidadeMaxima": 20, "capacidadeAtual": 0 }
+	]
+}

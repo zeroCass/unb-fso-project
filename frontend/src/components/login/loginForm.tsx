@@ -1,13 +1,11 @@
 "use client";
 
-import { login } from "@/actions/login";
-import { UserContext } from "@/context/userContext";
+import login from "@/actions/login";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 
 export default function LoginForm() {
-	const { setUser } = useContext(UserContext);
 	const router = useRouter();
 	const [showPassword, setShowPassword] = useState(false);
 	const [state, action] = useFormState(login, {
@@ -17,12 +15,12 @@ export default function LoginForm() {
 	});
 
 	useEffect(() => {
-		if (state.sucess && state.data) {
-			setUser(state.data);
+		if (state.sucess) {
 			console.warn("estado com sucesso, redirecionando");
-			router.push("/");
+			window.location.href = "/";
+			// router.push("/");
 		}
-	}, [state.sucess, state.data, router, setUser]);
+	}, [state.sucess, router]);
 
 	return (
 		<section>

@@ -1,7 +1,6 @@
 "use client";
-// import Cookies from "js-cookie";
-// import { useCookies } from "next-client-cookies";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+
 export type User = {
 	name: string;
 	cpf: string;
@@ -9,25 +8,28 @@ export type User = {
 };
 
 type IUserContext = {
-	user: User;
-	setUser: React.Dispatch<React.SetStateAction<User>>;
+	user: User | null;
+	setUser: React.Dispatch<React.SetStateAction<User | null>>;
 };
 
-export const UserContext = createContext({} as IUserContext);
+export const UserContext = createContext<IUserContext | null>(null);
 
 export function UserContextProvider({
 	children,
 	session,
+	user,
 }: {
 	children: React.ReactNode;
+	user: User | null;
 	session: { user: User; exp: number; expires: string; iat: number };
 }) {
-	const [user, setUser] = useState({} as User);
+	const [userState, setUser] = useState<User | null>(user);
 	useEffect(() => {
-		if (session?.user) {
-			setUser(session.user);
-			console.warn("the user: ", user);
-		}
-	}, [user, session?.user]);
-	return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
+		console.warn("user: ", userState);
+	});
+	return <UserContext.Provider value={{ user: userState, setUser }}>{children}</UserContext.Provider>;
+}
+
+export function useUser() {
+	return useContext(UserContext);
 }
