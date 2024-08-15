@@ -13,8 +13,8 @@ export type SessionCookie = {
 
 export type User = {
 	nome: string;
-	role: string;
-	turma?: string | null | undefined;
+	role: "ADMIN" | "ALUNO";
+	turma?: number | null | undefined;
 };
 
 export type IUserContext = {

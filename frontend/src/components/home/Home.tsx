@@ -1,16 +1,50 @@
 "use client";
 
 import { useUser } from "@/context/userContext";
+import { useRouter } from "next/navigation";
+
+type UserRole = {
+	role: "ADMIN" | "ALUNO";
+};
+
+function CustomButton({ role }: UserRole) {
+	const router = useRouter();
+	return (
+		<div>
+			{role === "ALUNO" && <button onClick={() => router.push("/turnos")}>MATRICULAR-SE</button>}
+
+			{role === "ADMIN" && <button>PLACE HOLDER</button>}
+		</div>
+	);
+}
 
 export default function Home() {
-	const userContext = useUser();
+	const { user } = useUser();
+	const isMatriculado = user?.turma ? true : false;
 
 	return (
-		<section>
+		<div>
 			<div>
-				<h5>Nome: {userContext?.user?.nome}</h5>
-				<h6>{userContext?.user?.role}</h6>
+				{user?.role === "ALUNO" && !isMatriculado && (
+					<div>
+						<h2>Olá {user?.nome}. Você ainda não está matriculado</h2>
+						<CustomButton role={user.role} />
+					</div>
+				)}
+				{user?.role === "ALUNO" && isMatriculado && (
+					<div>
+						<h2>
+							Olá {user?.nome}. Você já está matriculado na Turma {user.turma}
+						</h2>
+					</div>
+				)}
+				{user?.role === "ADMIN" && (
+					<div>
+						<h2>Olá ADM {user?.nome}.</h2>
+						<CustomButton role={user.role} />
+					</div>
+				)}
 			</div>
-		</section>
+		</div>
 	);
 }

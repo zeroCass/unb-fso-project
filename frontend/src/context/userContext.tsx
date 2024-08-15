@@ -1,5 +1,5 @@
 "use client";
-import type { IUserContext, User } from "@/types/types";
+import type { IUserContext, User } from "@/types";
 import { createContext, useContext, useEffect, useState } from "react";
 
 export const UserContext = createContext<IUserContext | null>(null);
@@ -21,5 +21,9 @@ export function UserContextProvider({
 }
 
 export function useUser() {
-	return useContext(UserContext);
+	const context = useContext(UserContext);
+	if (!context) {
+		throw new Error("useUser deve ter usado dentro de UserContextProvider");
+	}
+	return context;
 }

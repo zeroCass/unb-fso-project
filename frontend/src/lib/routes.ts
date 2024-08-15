@@ -1,5 +1,5 @@
 const routes = {
-	protectedRoutes: ["/"],
+	protectedRoutes: ["/", "/turmas", "/turnos"],
 	authRoutes: ["/login"],
 };
 

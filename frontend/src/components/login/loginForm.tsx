@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useFormState } from "react-dom";
 
-import { TextField, Button, Box } from "@mui/material";
-import styles from "./loginForm.module.css";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
+import { Box, Button, TextField } from "@mui/material";
+import styles from "./loginForm.module.css";
 
 export default function LoginForm() {
 	const router = useRouter();
@@ -55,12 +55,7 @@ export default function LoginForm() {
 						/>
 
 						<Box mt={2}>
-							<Button
-								fullWidth
-								variant="contained"
-								color="primary"
-								type="submit"
-							>
+							<Button fullWidth variant="contained" color="primary" type="submit">
 								Entrar
 							</Button>
 						</Box>

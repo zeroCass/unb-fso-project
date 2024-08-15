@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { getToken } from "./getToken";
 
 export async function getTurmas() {
@@ -10,6 +11,8 @@ export async function getTurmas() {
 			Authorization: `Token ${token}`,
 		},
 	});
+	// ensure that is the lastest data
+	revalidatePath("/turmas");
 
 	if (!response.ok) {
 		throw new Error("Erro ao buscar turmas");
