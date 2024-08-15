@@ -16,6 +16,8 @@ urlpatterns = [
     path('aluno/update/<int:pk>/', views.update_aluno, name='update-aluno'),
     path('aluno/delete/<int:pk>/', views.delete_aluno, name='delete-aluno'),
 
+
+
     # turma crud endpoints
     path('turma/create/', views.create_turma, name='create-turma'),
     path('turma/all/', views.view_turma, name='view_turma'),
@@ -24,8 +26,11 @@ urlpatterns = [
     path('turma/delete/<int:pk>/',
          views.delete_turma, name='delete-turma'),
 
+     # Get current user info:
+    path('user/', views.get_user, name='get-user'),
 
-    path('user/', views.get_user, name='get-user')
+    path('matricula/', views.matricula, name='matricula')
+
 
 
 

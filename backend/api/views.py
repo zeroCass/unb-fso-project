@@ -69,8 +69,6 @@ class AlunoRegistrationView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
 # LOGIN E LOGOUT PARA Admin e Alunos
 
 class UserLoginView(APIView):
@@ -282,3 +280,14 @@ def get_user(request):
             return Response(response_data, status=status.HTTP_200_OK)
     else:
         return Response({{ 'Erro ao pegar usuario' }}, status=status.HTTP_400_BAD_REQUEST)
+
+@permission_classes([IsAuthenticated]) # precisa estar autenticado para acessar essa rota 
+@api_view(['POST'])
+def matricula(request):
+    user = request.user
+    turma_id = request.data['turma']
+    # Verifica se o usuário tem o papel de ADMIN
+    if user.role == 'ADMIN':
+        return Response({'error': 'Você não está autorizado fazer matricula.'}, status=status.HTTP_200_OK)
+    else:
+        return user.aluno.matricula(turma_id)
