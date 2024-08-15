@@ -11,8 +11,8 @@
 
 ### Autenticação - Documentação e Forma de Uso
 
-      A autenticação é feita com o sistema de Tokens do DJANGO Framework.
-      1 - Para criar um ADMIN utiliza-se o Endpoint '/api/register/' com método POST passando as seguintes informações:
+A autenticação é feita com o sistema de Tokens do DJANGO Framework.
+1 - Para criar um ADMIN utiliza-se o Endpoint '/api/register/' com método POST passando as seguintes informações:
       ```
       {
             "cpf": "12345678910",
@@ -21,7 +21,7 @@
             "role": "ADMIN"
       }
       ```   
-      A resposta será dessa forma caso o registro seja feito com sucesso:
+A resposta será dessa forma caso o registro seja feito com sucesso:
       ```
       {
             "cpf": "12345678910",
@@ -30,7 +30,7 @@
       }
       ```
 
-      Depois de registrado, o usuário ADMIN pode fazer Login com um POST no endpoint '/api/login/'. O corpo do POST deve ser formatado da seguinta maneira:
+Depois de registrado, o usuário ADMIN pode fazer Login com um POST no endpoint '/api/login/'. O corpo do POST deve ser formatado da seguinta maneira:
 
       ```
       {
@@ -39,8 +39,8 @@
       }
       
       ```
-      Caso a requisição seja sucedida, o backend retorna uma resposta com um Token da seguinte forma:
-      Ex.:
+Caso a requisição seja sucedida, o backend retorna uma resposta com um Token da seguinte forma:
+Ex.:
       ```
       {
             "token": "878bf2185108b83af8f962e9275dcee9eae53e1e",
@@ -48,11 +48,11 @@
             "nome": "Felipe"
       }
       ```
-      Esse token deve ser salvo no cache do navegador, pois será utilizado em todas requisições que necessitam de permissões.
+Esse token deve ser salvo no cache do navegador, pois será utilizado em todas requisições que necessitam de permissões.
 
 
-      2 - Após a criação do ADMIN, é possível criar Alunos no Endpoint '/api/aluno/create', a requisição POST deve ter o corpo: 
-      Ex.:
+2 - Após a criação do ADMIN, é possível criar Alunos no Endpoint '/api/aluno/create', a requisição POST deve ter o corpo: 
+Ex.:
       ```
             {
                   "cpf": "12345678910",
@@ -61,11 +61,11 @@
                   "role": "ALUNO"
             }
       ```
-      E o Header deve ter: "Authorization: Token valor_do_token", é assim que o backend descobre qual usuário está logado a partir do Token. O login dos alunos utiliza a mesma URL do login para ADMINS.
+E o Header deve ter: "Authorization: Token valor_do_token", é assim que o backend descobre qual usuário está logado a partir do Token. O login dos alunos utiliza a mesma URL do login para ADMINS.
 
-      3 - Formato do corpo para criação de turmas (além do token de ADMIN no header):
+3 - Formato do corpo para criação de turmas (além do token de ADMIN no header):
       
-      Ex.:
+Ex.:
       ```
       {
             "nome": "A",
@@ -76,9 +76,15 @@
             "ano": 1
       }
       ```
-      4 - Para realizar o Logout (invalidar o token atual) basta realizar uma requisição GET na URL '/api/logout' passando o Token pelo Header.
+4 - Para realizar o Logout (invalidar o token atual) basta realizar uma requisição GET na URL '/api/logout' passando o Token pelo Header.
 
-      5 - Abaixo estão todos Endpoints: os métodos que aceitam as URL's, a URL e em seguida os roles que estão permitidos de acessar essas URL's.
+
+5 - Para um aluno se matricular em uma turma, é necessário, com o token de aluno, realizar um POST na url '/api/matricula/' com o corpo:
+      ```
+            {"turma":turma_id}
+      ```
+
+6 - Abaixo estão todos Endpoints: os métodos que aceitam as URL's, a URL e em seguida os roles que estão permitidos de acessar essas URL's.
 
 
 
@@ -100,6 +106,8 @@
       PUT - 'Update Aluno': '/api/aluno/update/pk' - ADMIN e Aluno com mesma PK
       DELETE - 'Delete Aluno': '/api/aluno/delete/pk'- Somente ADMIN
 
+
+      POST - 'Matricula Aluno em Turma': '/api/matricula/' - Somente alunos
 
       GET - 'Get All Turmas': '/api/admin/all' - ADMIN e Alunos 
       POST - 'Add Turma': '/api/turma/create' - Somente ADMIN
