@@ -1,11 +1,10 @@
-"use client";
 import Home from "@/components/home/Home";
+import { Container } from "@mui/material";
 
-export default function Page() {
+export default async function Page() {
 	return (
-		<div>
-			<h1>HOME</h1>
+		<Container sx={{ height: "100vh" }}>
 			<Home />
-		</div>
+		</Container>
 	);
 }
