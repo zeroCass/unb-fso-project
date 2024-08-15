@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 export default async function login(state: {}, formData: FormData) {
 	const cpf = formData.get("cpf") as string | null;
 	const password = formData.get("password") as string | null;
-	console.warn("cpf: ", cpf);
+	console.warn("cpf: ", cpf, password);
 
 	try {
 		if (!cpf) throw new Error("Preencha os dados.");
