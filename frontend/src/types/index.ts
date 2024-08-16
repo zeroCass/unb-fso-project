@@ -2,6 +2,7 @@ export type Session = {
 	token: string;
 	nome: string;
 	role: "ADMIN" | "ALUNO";
+	turma?: number | null | undefined
 };
 
 export type SessionCookie = {
@@ -41,6 +42,7 @@ enum TrilhaTurma {
 }
 
 export type Turma = {
+	id: number;
 	nome: NomeTurma;
 	turno: "MAT" | "VES";
 	trilha: TrilhaTurma;
@@ -48,3 +50,4 @@ export type Turma = {
 	capacidadeAtual: number;
 	ano: number;
 };
+
