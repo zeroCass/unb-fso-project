@@ -1,8 +1,9 @@
 export type Session = {
 	token: string;
+	id: number;
 	nome: string;
 	role: "ADMIN" | "ALUNO";
-	turma?: number | null | undefined
+	turma?: number | null | undefined;
 };
 
 export type SessionCookie = {
@@ -13,6 +14,7 @@ export type SessionCookie = {
 };
 
 export type User = {
+	id: number;
 	nome: string;
 	role: "ADMIN" | "ALUNO";
 	turma?: number | null | undefined;
@@ -50,4 +52,3 @@ export type Turma = {
 	capacidadeAtual: number;
 	ano: number;
 };
-

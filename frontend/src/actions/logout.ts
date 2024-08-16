@@ -7,7 +7,7 @@ export default async function logout() {
 	const token = await getToken();
 
 	const response = await fetch(`${process.env.DJANGO_API}/api/logout/`, {
-		method: "GET",
+		method: "POST",
 		headers: {
 			Authorization: `Token ${token}`,
 		},
