@@ -13,6 +13,7 @@ export async function getUser() {
 	const user: User = {
 		nome: decryptCookie.session.nome,
 		role: decryptCookie.session.role,
+		turma: decryptCookie.session?.turma || null 
 	};
 
 	return user;
