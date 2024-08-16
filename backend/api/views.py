@@ -8,8 +8,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario
-from .serializers import AdminSerializer, AlunoSerializer, TurmaSerializer
 from .permissions import IsAdminOrSpecificUser
+from .serializers import AdminSerializer, AlunoSerializer, TurmaSerializer
 
 
 @api_view(['GET'])
@@ -99,13 +99,13 @@ class UserLoginView(APIView):
             return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_403_FORBIDDEN)
 
 class UserLogoutView(APIView):
+    permission_classes = [IsAuthenticated]
     # post request (instead of get)
     def post(self, request):
         request.user.auth_token.delete()
         logout(request)
         content= {"Message": "Usuario deslogado."}
         return Response(status=200, data=content)
-    
 
 
 
