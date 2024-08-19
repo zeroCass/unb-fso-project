@@ -28,17 +28,6 @@ function CustomButton({ role }: UserRole) {
 	);
 }
 
-const BackgroundImage = () => {
-	return (
-		<Image
-			src="/images/undraw_Studying.svg"
-			alt="Estudando"
-			width={500}
-			height={500}
-		/>
-	);
-};
-
 export default function Home() {
 	const { user } = useUser();
 	const isMatriculado = user?.turma ? true : false;
@@ -46,7 +35,7 @@ export default function Home() {
 	return (
 		<div>
 			<div>
-				{user?.role === "ALUNO" && !isMatriculado && (
+				{user?.role === "ALUNO" && (
 					<div>
 						<Typography
 							sx={{
@@ -60,7 +49,7 @@ export default function Home() {
 								color: "#000000",
 							}}
 						>
-							Olá, {user?.nome}.
+							Olá, <br /> {user?.nome}.
 						</Typography>
 
 						<Typography
@@ -75,44 +64,84 @@ export default function Home() {
 								color: "#000000",
 							}}
 						>
-							você não está matriculado ainda.
+							{!isMatriculado 
+								? `você não está matriculado ainda.`
+							 	:  `você está matriculado na trilha` }
 						</Typography>
-						<CustomButton role={user.role} />
+						
+						{!isMatriculado  && (
+							<>
+							<CustomButton role={user.role} />
+							<Typography
+								sx={{
+									position: "absolute",
+									left: "405px",
+									top: "781px",
+									fontFamily: "Archivo Narrow",
+									fontWeight: 400,
+									fontSize: "48px",
+									lineHeight: "65px",
+									textAlign: "center",
+									color: "#000000",
+								}}
+							>
+								para se matricular
+							</Typography>
+							</>
+						)}
 
-						<Typography
+						{isMatriculado  && (
+							<>
+							<Typography 
 							sx={{
-								position: "absolute",
-								left: "122px",
-								top: "781px",
-								fontFamily: "Archivo Narrow",
-								fontWeight: 400,
-								fontSize: "48px",
-								lineHeight: "65px",
-								textAlign: "center",
-								color: "#000000",
-							}}
-						>
-							para se matricular
-						</Typography>
-
+									position: "absolute",
+									top: "550px",
+									fontFamily: "Archivo Narrow",
+									fontWeight: 400,
+									fontSize: "48px",
+									lineHeight: "65px",
+									textAlign: "center",
+									color: "#1c74ec",
+								}}
+							>
+								 TRILHA
+							</Typography>
+							<Typography
+								sx={{
+									position: "absolute",
+									left: "405px",
+									top: "720px",
+									fontFamily: "Archivo Narrow",
+									fontWeight: 400,
+									fontSize: "48px",
+									lineHeight: "65px",
+									textAlign: "center",
+									color: "#000000",
+								}}
+							>
+								Turma: {user.turma}
+								<br />
+								Turno:
+							</Typography>
+							</>
+						)}
+						
 						<Box
 							sx={{
 								position: "absolute",
 								width: "520px",
 								height: "520px",
-								left: "803px",
-								top: "301px",
+								left: "900px",
+								top: "500px",
 							}}
 						>
-							<BackgroundImage />
+							<Image
+								src="/images/undraw_Studying.svg"
+								alt="Estudando"
+								width={500}
+								height={500}
+							/>
 						</Box>
-					</div>
-				)}
-				{user?.role === "ALUNO" && isMatriculado && (
-					<div>
-						<h2>
-							Olá {user?.nome}. Você já está matriculado na Turma {user.turma}
-						</h2>
 					</div>
 				)}
 				{user?.role === "ADMIN" && (
