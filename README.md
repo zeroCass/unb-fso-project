@@ -1,5 +1,10 @@
 # Projeto Final de FSO Unb (Fundamentos de Sistemas Operacionais)
 
+    Disciplina: Fundamentos de Sistema Operacional
+    Alunos: Felipe Rocha - 170050084
+            Maylla Krislainy - 190043873
+            Mateus Valerio - 190035161
+
 ## Instalação
 
 ### Backend
