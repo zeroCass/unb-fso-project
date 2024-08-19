@@ -4,7 +4,7 @@
     Alunos: Felipe Rocha - 170050084
             Maylla Krislainy - 190043873
             Mateus Valerio - 190035161
-            
+
     Obs.: Mais documentação disponível na pasta docs/.
 
 ## Instalação
@@ -21,12 +21,15 @@ pip install -r requirements.txt
 py manage.py makemigrations
 py manage.py migrate
 
+# Popule o banco de dados com dados iniciais backend/api/fixtures diretório
+py manage.py loaddata turmas.json
+py manage.py loaddata usuarios.json
+
+
 # (Opcional) Crie um superuser
 py manage.py createsuperuser
 ..<input a username, email, and password>
 
-# (Opcional) Popule o banco de dados com dados iniciais backend/api/fixtures diretório
-py manage.py loaddata fixture
 ```
 
 ### Frontend
@@ -41,7 +44,8 @@ npm install
 1 - Crie e configure o arquivo .env de acordo com exemplo .env.sample
 2 - Crie o arquivo .env.local na raiz do diretório frontend (onde se encontra outros arquivos de configuração como package.json, next.config, etc)
 3 - Defina o endereço da API do DJANGO:
-       ```DJANGO_API='http://localhost:8000'```
+`DJANGO_API='http://localhost:8000'`
+
 ## Como rodar
 
 ### Backend

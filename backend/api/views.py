@@ -84,15 +84,7 @@ class UserLoginView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             response_data = {
                 'token': token.key,
-                'role': user.role,
-                'id': user.id,
-                'nome': user.nome
             }
-
-            # Adiciona a turma (id) se o usuário for um aluno
-            if user.role == 'ALUNO':
-                response_data['turma'] = user.aluno.turma.id if user.aluno.turma else None
-
             return Response(response_data, status=status.HTTP_202_ACCEPTED)
 
         else:
