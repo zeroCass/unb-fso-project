@@ -3,6 +3,10 @@
 import { encrypt } from "@/lib/_session";
 import { cookies } from "next/headers";
 
+type ResponseData = {
+	token: string;
+};
+
 export default async function login(state: {}, formData: FormData) {
 	const cpf = formData.get("cpf") as string | null;
 	const password = formData.get("password") as string | null;
@@ -23,11 +27,11 @@ export default async function login(state: {}, formData: FormData) {
 			throw new Error("Failed to authenticate");
 		}
 
-		const sessionWithToken = await response.json();
+		const data: ResponseData = await response.json();
 
 		// Create the session
 		const expires = new Date(Date.now() + 10 * 60 * 1000);
-		const session = await encrypt({ session: sessionWithToken, expires });
+		const session = await encrypt({ token: data.token, expires });
 
 		// Save the session in a cookie
 		cookies().set("session", session, { expires, httpOnly: true });

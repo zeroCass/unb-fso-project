@@ -1,6 +1,5 @@
+import { fetchUser } from "@/actions/fetchUser";
 import { UserContextProvider } from "@/context/userContext";
-import { getSession } from "@/lib/_session";
-import { getUser } from "@/lib/getUser";
 import type { Metadata } from "next";
 import { CookiesProvider } from "next-client-cookies/server";
 import "./globals.css";
@@ -15,16 +14,13 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const session = await getSession();
-	const user = await getUser();
+	const user = await fetchUser();
 
 	return (
 		<CookiesProvider>
 			<html lang="pt-BR">
 				<body>
-					<UserContextProvider user={user} session={session}>
-						{children}
-					</UserContextProvider>
+					<UserContextProvider user={user}>{children}</UserContextProvider>
 				</body>
 			</html>
 		</CookiesProvider>

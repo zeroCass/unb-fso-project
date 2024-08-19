@@ -9,14 +9,14 @@ export default async function matricular(turmaID: number) {
 		method: "POST",
 		headers: {
 			Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
+			"Content-Type": "application/json",
 		},
-        body: JSON.stringify({ turma: turmaID })
+		body: JSON.stringify({ turma: turmaID }),
 	});
 
 	if (!response.ok) {
-		throw new Error("Failed to authenticate");
+		throw new Error("Falha ao realizar matricula");
 	}
-    console.warn('Matricula realizada com sucesso!')
+	console.warn("Matricula realizada com sucesso!");
 	redirect("/");
 }

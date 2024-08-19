@@ -13,7 +13,7 @@ export async function fetchAluno(userID: number) {
 		});
 
 		const user = await response.json();
-		console.warn("getUser: ", user);
+		console.warn("getAluno: ", user);
 		return user;
 	} catch (err: unknown) {
 		console.warn(err);

@@ -1,13 +1,5 @@
 export type Session = {
 	token: string;
-	id: number;
-	nome: string;
-	role: "ADMIN" | "ALUNO";
-	turma?: number | null | undefined;
-};
-
-export type SessionCookie = {
-	session: Session;
 	expires: string; //ISO 8601 date string
 	iat: number;
 	exp: number;
