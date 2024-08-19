@@ -1,0 +1,98 @@
+[
+	{
+		"model": "api.turma",
+		"pk": 1,
+		"fields": {
+			"nome": "A",
+			"turno": "MAT",
+			"trilha": "ENEGRESER",
+			"ano": 1,
+			"capacidadeMaxima": 10,
+			"capacidadeAtual": 9
+		}
+	},
+	{
+		"model": "api.turma",
+		"pk": 2,
+		"fields": {
+			"nome": "B",
+			"turno": "MAT",
+			"trilha": "DNMEV",
+			"ano": 1,
+			"capacidadeMaxima": 10,
+			"capacidadeAtual": 10
+		}
+	},
+	{
+		"model": "api.turma",
+		"pk": 3,
+		"fields": {
+			"nome": "C",
+			"turno": "MAT",
+			"trilha": "AMN",
+			"ano": 1,
+			"capacidadeMaxima": 10,
+			"capacidadeAtual": 10
+		}
+	},
+	{
+		"model": "api.turma",
+		"pk": 4,
+		"fields": {
+			"nome": "D",
+			"turno": "MAT",
+			"trilha": "AGRO",
+			"ano": 1,
+			"capacidadeMaxima": 10,
+			"capacidadeAtual": 10
+		}
+	},
+	{
+		"model": "api.turma",
+		"pk": 5,
+		"fields": {
+			"nome": "E",
+			"turno": "VES",
+			"trilha": "ENEGRESER",
+			"ano": 1,
+			"capacidadeMaxima": 10,
+			"capacidadeAtual": 9
+		}
+	},
+	{
+		"model": "api.turma",
+		"pk": 6,
+		"fields": {
+			"nome": "F",
+			"turno": "VES",
+			"trilha": "DNMEV",
+			"ano": 1,
+			"capacidadeMaxima": 10,
+			"capacidadeAtual": 10
+		}
+	},
+	{
+		"model": "api.turma",
+		"pk": 7,
+		"fields": {
+			"nome": "G",
+			"turno": "MAT",
+			"trilha": "AMN",
+			"ano": 1,
+			"capacidadeMaxima": 10,
+			"capacidadeAtual": 10
+		}
+	},
+	{
+		"model": "api.turma",
+		"pk": 8,
+		"fields": {
+			"nome": "H",
+			"turno": "VES",
+			"trilha": "AGRO",
+			"ano": 1,
+			"capacidadeMaxima": 10,
+			"capacidadeAtual": 10
+		}
+	}
+]
