@@ -1,20 +1,39 @@
-.button_styled {
-	position: absolute;
-	width: 500px;
-	top: 707px;
+.title {
+	font-family: var(--font-title);
+	font-size: 128px;
+	line-height: 147px;
+}
 
-	font-family: "Archivo Narrow";
-	font-style: normal;
-	font-weight: 400;
-	font-size: 64px;
-	line-height: 86px;
+.base_text {
+	font-family: var(--font-base);
+	font-size: 45px;
+	line-height: 65px;
+}
+
+.styled_text {
+	font-family: var(--font-text);
+	font-size: 65px;
+	line-height: 85px;
 
 	background: var(--gradient-primary);
-	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+.button_styled {
+	font-family: var(--font-text);
+	font-size: 65px;
+	line-height: 85px;
+
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	background: var(--gradient-primary);
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
 	border: none;
-	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 
-	color: var(--gradient-primary);
+	transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+
+.button_styled:hover {
+	transform: scale(1.1);
 }
