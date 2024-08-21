@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario
+from .permissions import IsAdminOrSpecificUser
 from .serializers import AdminSerializer, AlunoSerializer, TurmaSerializer
 
 
@@ -83,27 +84,20 @@ class UserLoginView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             response_data = {
                 'token': token.key,
-                'role': user.role,
-                'nome': user.nome
             }
-
-            # Adiciona a turma se o usuário for um aluno
-            if user.role == 'ALUNO':
-                response_data['turma'] = user.aluno.turma.nome if user.aluno.turma else None
-
             return Response(response_data, status=status.HTTP_202_ACCEPTED)
 
         else:
             return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_403_FORBIDDEN)
 
 class UserLogoutView(APIView):
-
-    def get(self, request):
+    permission_classes = [IsAuthenticated]
+    # post request (instead of get)
+    def post(self, request):
         request.user.auth_token.delete()
         logout(request)
         content= {"Message": "Usuario deslogado."}
         return Response(status=200, data=content)
-    
 
 
 
@@ -130,8 +124,26 @@ def view_alunos(request):
         serializer = AlunoSerializer(alunos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response(data={{ 'Erro Interno: ', str(e) }},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data={{ 'error':f'Erro Interno: {str(e)}',  }},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 # update aluno
+
+# get detail of aluno
+@permission_classes([IsAuthenticated]) # precisa estar autenticado para acessar essa rota
+@api_view(['GET'])
+def view_aluno_details(request, pk):
+    try:
+        aluno = Aluno.objects.get(pk=pk)
+    except Aluno.DoesNotExist:
+        return Response({ 'error': 'Aluno não encontrado' }, status=status.HTTP_404_NOT_FOUND)
+    
+    # verifica permissao para concluir 
+    permission = IsAdminOrSpecificUser()
+    if not permission.has_object_permission(request, aluno):
+        return Response({ 'error': 'Permissao negada' }, status=status.HTTP_403_FORBIDDEN)
+    
+    serializer = AlunoSerializer(aluno)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @permission_classes([IsAuthenticated]) # precisa estar autenticado para acessar essa rota
 @api_view(['PUT'])
@@ -157,7 +169,7 @@ def delete_aluno(request, pk):
     print(request.user)
     # Verifica se o usuário tem o papel de ADMIN
     if user.role != 'ADMIN':
-        return Response({'error': 'Você não está autorizado a deletar esse aluno.'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'error': 'Você não está autorizado a deletar esse aluno.'}, status=status.HTTP_403_FORBIDDEN)
  
     aluno = get_object_or_404(Aluno, pk=pk)
     aluno.delete()
@@ -174,7 +186,7 @@ def create_turma(request):
     print(request.user)
     # Verifica se o usuário tem o papel de ADMIN
     if user.role != 'ADMIN':
-        return Response({'error': 'Você não está autorizado a registrar Turmas.'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'error': 'Você não está autorizado a registrar Turmas.'}, status=status.HTTP_403_FORBIDDEN)
 
     turma = TurmaSerializer(data=request.data)
     print('request data:', request.data)
@@ -189,8 +201,8 @@ def create_turma(request):
         return Response(turma.data)
     else:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data="Uma turma com esse nome já foi cadastrado ou Os parâmetros enviados estão errados.")
-# get all turmas
 
+# get all turmas
 @permission_classes([IsAuthenticated]) # precisa estar autenticado para acessar essa rota (admin e alunos)
 @api_view(['GET'])
 def view_turma(request):
@@ -204,6 +216,20 @@ def view_turma(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({{ 'Erro Interno: ', str(e) }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# get turma details
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_turma_detail(request, pk):
+    try:
+        turma = Turma.objects.get(pk=pk)
+        serializer = TurmaSerializer(turma)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Turma.DoesNotExist:
+        return Response({'error': 'Turma não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': f'Internal error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # UPDATE TURMA
 @permission_classes([IsAuthenticated]) # precisa estar autenticado para acessar essa rota (somente admin)
@@ -268,14 +294,15 @@ def get_user(request):
     user = request.user
     if user:
             response_data = {
+                'id': user.id,
                 'cpf': user.cpf,
                 'role': user.role,
                 'nome': user.nome
             }
 
-            # Adiciona a turma se o usuário for um aluno
+            # Adiciona a turma (id) se o usuário for um aluno
             if user.role == 'ALUNO':
-                response_data['turma'] = user.aluno.turma.nome if user.aluno.turma else None
+                response_data['turma'] = user.aluno.turma.id if user.aluno.turma else None
 
             return Response(response_data, status=status.HTTP_200_OK)
     else:
@@ -288,6 +315,6 @@ def matricula(request):
     turma_id = request.data['turma']
     # Verifica se o usuário tem o papel de ADMIN
     if user.role == 'ADMIN':
-        return Response({'error': 'Você não está autorizado fazer matricula.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Você não está autorizado fazer matricula.'}, status=status.HTTP_403_FORBIDDEN)
     else:
         return user.aluno.matricula(turma_id)

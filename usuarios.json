@@ -1,0 +1,58 @@
+[
+	{
+		"model": "api.usuario",
+		"pk": 1,
+		"fields": {
+			"password": "pbkdf2_sha256$720000$ope3AMCmy5ztm7tQY2ztOQ$k5tIXgJsRZ5Fa5WRlJnXihtrMe6LzepGfWoT7mew+5w=",
+			"last_login": null,
+			"is_superuser": false,
+			"cpf": "0000001",
+			"nome": "Jao Snow",
+			"role": "ADMIN",
+			"groups": [],
+			"user_permissions": []
+		}
+	},
+	{
+		"model": "api.usuario",
+		"pk": 2,
+		"fields": {
+			"password": "pbkdf2_sha256$720000$pELtjKP0CgQCHUeZhFaB3q$q3fhejjdGqVhcZS1mNe1uZ2DiNmN+7HIcPpmsR0YB/0=",
+			"last_login": null,
+			"is_superuser": false,
+			"cpf": "0000002",
+			"nome": "Arya Stark",
+			"role": "ALUNO",
+			"groups": [],
+			"user_permissions": []
+		}
+	},
+	{
+		"model": "api.usuario",
+		"pk": 3,
+		"fields": {
+			"password": "pbkdf2_sha256$720000$PW9OLxoJa2WWmGEAFA1Hzm$8ngssRMRTp0WNUXG2W6INYCk+Fk1VSZmLDWaqAB0mR8=",
+			"last_login": null,
+			"is_superuser": false,
+			"cpf": "0000003",
+			"nome": "Breno Stark",
+			"role": "ALUNO",
+			"groups": [],
+			"user_permissions": []
+		}
+	},
+	{
+		"model": "api.aluno",
+		"pk": 2,
+		"fields": {
+			"turma": 1
+		}
+	},
+	{
+		"model": "api.aluno",
+		"pk": 3,
+		"fields": {
+			"turma": null
+		}
+	}
+]

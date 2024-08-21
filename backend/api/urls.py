@@ -1,6 +1,6 @@
 from django.urls import path
-from . import views
 
+from . import views
 
 urlpatterns = [
 
@@ -16,7 +16,9 @@ urlpatterns = [
     path('aluno/update/<int:pk>/', views.update_aluno, name='update-aluno'),
     path('aluno/delete/<int:pk>/', views.delete_aluno, name='delete-aluno'),
 
-
+     # details routes
+     path('aluno/<int:pk>/', views.view_aluno_details, name='detail-aluno'),
+     path('turma/<int:pk>/', views.view_turma_detail, name='detail-turma'),
 
     # turma crud endpoints
     path('turma/create/', views.create_turma, name='create-turma'),

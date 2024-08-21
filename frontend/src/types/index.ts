@@ -1,17 +1,12 @@
 export type Session = {
 	token: string;
-	nome: string;
-	role: "ADMIN" | "ALUNO";
-};
-
-export type SessionCookie = {
-	session: Session;
 	expires: string; //ISO 8601 date string
 	iat: number;
 	exp: number;
 };
 
 export type User = {
+	id: number;
 	nome: string;
 	role: "ADMIN" | "ALUNO";
 	turma?: number | null | undefined;
@@ -41,6 +36,7 @@ enum TrilhaTurma {
 }
 
 export type Turma = {
+	id: number;
 	nome: NomeTurma;
 	turno: "MAT" | "VES";
 	trilha: TrilhaTurma;
