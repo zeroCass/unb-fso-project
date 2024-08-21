@@ -11,7 +11,7 @@ function CustomButton({ role }: UserRole) {
 	const router = useRouter();
 	return (
 		<div>
-			{role === "ALUNO" && <button onClick={() => router.push("/turnos")}>MATRICULE-SE</button>}
+			{role === "ALUNO" && <button onClick={() => router.push("/matricula/turnos")}>MATRICULE-SE</button>}
 
 			{role === "ADMIN" && <button>PLACE HOLDER</button>}
 		</div>

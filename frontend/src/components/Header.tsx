@@ -32,7 +32,7 @@ export default function Header() {
 								<Link style={{ textDecoration: "none", color: "#a8f", fontSize: "20px" }} href="/turmas">
 									Turmas
 								</Link>
-								<Link style={{ textDecoration: "none", color: "#a8f", fontSize: "20px" }} href="/turnos">
+								<Link style={{ textDecoration: "none", color: "#a8f", fontSize: "20px" }} href="matricula/turnos">
 									Turnos
 								</Link>
 							</>
