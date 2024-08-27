@@ -1,7 +1,8 @@
-import { revalidatePath } from "next/cache";
 import { getToken } from "@/lib/getToken";
+import { Turma } from "@/types";
+import { revalidatePath } from "next/cache";
 
-export async function fetchTurmas() {
+export async function fetchTurmas(): Promise<Turma[]> {
 	const token = await getToken();
 	if (!token) throw new Error("Token inválido");
 
