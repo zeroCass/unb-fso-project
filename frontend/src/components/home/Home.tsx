@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Box, Container, Typography } from "@mui/material";
 import styles from "./home.module.css";
 import Image from "next/image";
+import { Turma } from "@/types";
 
 type UserRole = {
 	role: "ADMIN" | "ALUNO";
@@ -28,7 +29,7 @@ function CustomButton({ role }: UserRole) {
 	);
 }
 
-const AlunoContent = ({ user }: any) => {
+const AlunoContent = ({ user, turma }: any) => {
 	const isMatriculado = Boolean(user?.turma);
 
 	return (
@@ -72,10 +73,10 @@ const AlunoContent = ({ user }: any) => {
 							alignItems: "center",
 						}}
 					>
-						<p className={styles.styled_text}>TRILHA</p>
+						<p className={styles.styled_text}>{turma?.trilha}</p>
 						<Box className={styles.base_text} sx={{ marginTop: "15%" }}>
-							<p>Turma: {user.turma}</p>
-							<p>Turno:</p>
+							<p>Turma: {turma?.nome}</p>
+							<p>Turno: {turma?.turno}</p>
 						</Box>
 					</Box>
 				)}
@@ -109,8 +110,14 @@ const AdminContent = ({ user }: any) => {
 	);
 };
 
-export default function Home() {
+export default function Home({ turmas }: { turmas: Turma[] }) {
 	const { user } = useUser();
+	const turma =
+		user?.role === "ALUNO" && user?.turma
+			? turmas.find((t) => t.id === user.turma) || null
+			: turmas.length > 0
+			? turmas[0]
+			: null;
 
 	return (
 		<Container
@@ -122,7 +129,7 @@ export default function Home() {
 				height: "100%",
 			}}
 		>
-			{user?.role === "ALUNO" && <AlunoContent user={user} />}
+			{user?.role === "ALUNO" && <AlunoContent user={user} turma={turma} />}
 			{user?.role === "ADMIN" && <AdminContent user={user} />}
 		</Container>
 	);

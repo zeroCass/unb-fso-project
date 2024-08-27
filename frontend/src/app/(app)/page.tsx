@@ -1,5 +1,10 @@
 import Home from "@/components/home/Home";
+import { fetchTurmas } from "@/actions/fetchTurmas";
+import { Turma } from "@/types";
+
 
 export default async function Page() {
-	return <Home />;
+	const turmas: Turma[] = await fetchTurmas();
+
+	return <Home turmas={turmas} />;
 }
