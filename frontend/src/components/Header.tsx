@@ -18,7 +18,7 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 const pages = [{ name: "Home", path: "/" }];
 const adminPages = [
 	{ name: "Turmas", path: "/turmas" },
-	{ name: "Turnos", path: "/turnos" },
+	{ name: "Turnos", path: "/matricula/turnos" },
 ];
 
 const DesktopMenu = ({ user }: any) => (

@@ -16,7 +16,7 @@ function CustomButton({ role }: UserRole) {
 		<>
 			{role === "ALUNO" ? (
 				<button
-					onClick={() => router.push("/turnos")}
+					onClick={() => router.push("/matricula/turnos")}
 					className={styles.button_styled}
 				>
 					Clique Aqui
