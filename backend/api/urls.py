@@ -31,7 +31,11 @@ urlpatterns = [
      # Get current user info:
     path('user/', views.get_user, name='get-user'),
 
-    path('matricula/', views.matricula, name='matricula')
+    path('matricula/', views.matricula, name='matricula'),
+
+     # get para geracao de turmas automatica:
+     path('gerar-turmas/', views.create_turmas, name='matricula')
+    
 
 
 
