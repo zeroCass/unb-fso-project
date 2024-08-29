@@ -1,10 +1,10 @@
+import { fetchTurma } from "@/actions/fetchTurma";
+import { fetchUser } from "@/actions/fetchUser";
 import Home from "@/components/home/Home";
-import { fetchTurmas } from "@/actions/fetchTurmas";
-import { Turma } from "@/types";
-
 
 export default async function Page() {
-	const turmas: Turma[] = await fetchTurmas();
+	const user = await fetchUser();
+	const turma = user?.role === "ALUNO" ? await fetchTurma(user.turma) : null;
 
-	return <Home turmas={turmas} />;
+	return <Home turma={turma} />;
 }

@@ -2,9 +2,11 @@ import { getToken } from "@/lib/getToken";
 import { Turma } from "@/types";
 import { revalidatePath } from "next/cache";
 
-export async function fetchTurma(turmaID: number): Promise<Turma> {
+export async function fetchTurma(turmaID: number | null | undefined): Promise<Turma | null> {
 	const token = await getToken();
 	if (!token) throw new Error("Token inválido");
+
+	if (!turmaID) return null;
 
 	const response = await fetch(`${process.env.DJANGO_API}/api/turma/${turmaID}/`, {
 		method: "GET",
