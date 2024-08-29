@@ -399,6 +399,7 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                 vagasGerais = vagas = floor(lenAlunos / 8)
                 restoVagas = lenAlunos % 8
                 for i in range(4):
+                    
                         # turno matutino
                     if(restoVagas > 0):
                         vagas = vagasGerais+1
@@ -412,6 +413,7 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                                         ano=2
                                         )
                     nova_turma.save()
+                    vagas = vagasGerais
                 for i in range(4):
                     if(restoVagas > 0):
                         vagas = vagasGerais+1
@@ -425,6 +427,7 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                                         ano=2
                                         )
                     nova_turma.save()
+                    vagas = vagasGerais
 
             return Response({"Vagas Criadas com Sucesso!"}, status=status.HTTP_200_OK)
         except Exception as e:
