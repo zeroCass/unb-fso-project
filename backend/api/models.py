@@ -101,3 +101,8 @@ class Turma(models.Model):
     def atualizarCapacidade(self):
         self.capacidadeAtual -= 1
         self.save()
+    def getAll(self):
+        queryset = self._meta.model.objects.all()
+        # can use the below method also
+        # queryset = self.__class__.objects.all()   
+        return queryset
