@@ -13,6 +13,10 @@ static/
 **/migrations/**
 !**/migrations
 !**/migrations/__init__.py
+venv/
+**/venv/
+env/
+**/env/
 
 #others
 .vscode

@@ -6,9 +6,5 @@ import { Turma } from "@/types";
 export default async function Page() {
 	const turmas: Turma[] = await fetchTurmas();
 
-	return (
-		<>
-			<EscolhaTurno turmas={turmas} />
-		</>
-	);
+	return <EscolhaTurno turmas={turmas} />;
 }

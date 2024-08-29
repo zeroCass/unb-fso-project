@@ -1,10 +1,10 @@
+import { fetchTurma } from "@/actions/fetchTurma";
+import { fetchUser } from "@/actions/fetchUser";
 import Home from "@/components/home/Home";
-import { Container } from "@mui/material";
 
 export default async function Page() {
-	return (
-		<Container sx={{ height: "100vh" }}>
-			<Home />
-		</Container>
-	);
+	const user = await fetchUser();
+	const turma = user?.role === "ALUNO" ? await fetchTurma(user.turma) : null;
+
+	return <Home turma={turma} />;
 }

@@ -1,104 +1,171 @@
 "use client";
 import { useUser } from "@/context/userContext";
 import { Turma } from "@/types";
-import { Box, Container, Grid, Paper, Typography } from "@mui/material";
-import Link from "next/link";
+import {
+	Box,
+	Button,
+	Card,
+	CardContent,
+	Grid,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableRow,
+	Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
+
+const TURNOS = {
+	MAT: "Matutino",
+	VES: "Vespertino",
+};
+
+const calculateTotalVagas = (turmas: Turma[]) =>
+	turmas.reduce((total, turma) => total + turma.capacidadeAtual, 0);
+
+const TurnoCard = ({
+	turno,
+	totalVagas,
+	turmas,
+	user,
+	turnoKey,
+}: {
+	turno: string;
+	totalVagas: number;
+	turmas: Turma[];
+	user: any;
+	turnoKey: string;
+}) => {
+	const isAluno = user?.role === "ALUNO";
+
+	return (
+		<Card
+			elevation={5}
+			sx={{
+				width: 300,
+				margin: 2,
+				padding: 2,
+				maxHeight: 500,
+				minHeight: 300,
+				maxWidth: 345,
+				display: "flex",
+				flexDirection: "column",
+				borderRadius: 5,
+				backgroundColor: "var(--background-div)",
+			}}
+		>
+			<CardContent sx={{ flexGrow: 1 }}>
+				<Typography
+					variant="h4"
+					align="center"
+					textTransform="uppercase"
+					lineHeight="1rem"
+					gutterBottom
+					sx={{ fontFamily: "var(--font-title)" }}
+				>
+					{turno}
+				</Typography>
+				<Typography variant="subtitle1" align="center" gutterBottom>
+					Vagas disponíveis: {totalVagas}
+				</Typography>
+				<Box sx={{ overflowY: "auto", maxHeight: 400 }}>
+					<Table stickyHeader>
+						<TableHead>
+							<TableRow>
+								<TableCell
+									sx={{
+										fontWeight: "bold",
+										color: "var(--primary-dark)",
+										backgroundColor: "var(--background-div)",
+									}}
+								>
+									TRILHA
+								</TableCell>
+								<TableCell
+									align="right"
+									sx={{
+										fontWeight: "bold",
+										color: "var(--primary-dark)",
+										backgroundColor: "var(--background-div)",
+									}}
+								>
+									VAGAS
+								</TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{turmas.map(({ id, trilha, capacidadeAtual }) => (
+								<TableRow key={id}>
+									<TableCell>{trilha}</TableCell>
+									<TableCell align="right">{capacidadeAtual}</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</Box>
+			</CardContent>
+
+			{isAluno && (
+				<Button
+					variant="contained"
+					color="primary"
+					fullWidth
+					sx={{
+						marginTop: 2,
+						borderRadius: "20px",
+						backgroundColor: "var(--primary-dark)",
+					}}
+					href={`/matricula/turmas?turno=${turnoKey}`}
+				>
+					Escolher
+				</Button>
+			)}
+		</Card>
+	);
+};
 
 // fazer esta pagina ser server component com async (remover links)
 export default function EscolhaTurno({ turmas }: { turmas: Turma[] }) {
 	const { user } = useUser();
-	// const router = useRouter();
 
 	const [turmasMatutino, setTurmasMatutino] = useState<Turma[]>([]);
 	const [turmasVespertino, setTurmasVespertino] = useState<Turma[]>([]);
-	const [totalVagasMat, setTotalVagasMat] = useState<number>(0);
-	const [totalVagasVes, setTotalVagasVes] = useState<number>(0);
-
-	const calculateTotalVagas = (turmas: Turma[], turno: "MAT" | "VES") => {
-		let totalVagas = 0;
-		turmas.forEach((turma) => (totalVagas += turma.capacidadeAtual));
-		if (turno === "MAT") {
-			setTotalVagasMat(totalVagas);
-		} else {
-			setTotalVagasVes(totalVagas);
-		}
-	};
 
 	useEffect(() => {
-		const matutino: Turma[] = [];
-		const vespertino: Turma[] = [];
-
-		turmas.forEach((turma) => {
-			if (turma.turno === "MAT") {
-				matutino.push(turma);
-			} else {
-				vespertino.push(turma);
-			}
-		});
+		const matutino = turmas.filter((turma) => turma.turno === "MAT");
+		const vespertino = turmas.filter((turma) => turma.turno !== "MAT");
 
 		setTurmasMatutino(matutino);
 		setTurmasVespertino(vespertino);
-
-		calculateTotalVagas(matutino, "MAT");
-		calculateTotalVagas(vespertino, "VES");
 	}, [turmas]);
 
 	return (
-		<Container>
-			<Grid container spacing={2}>
-				<Grid item xs={6}>
-					<Paper elevation={4}>
-						<Box display={"flex"} flexDirection={"column"} bgcolor={"burlywood"}>
-							{/*  */}
-							<Typography variant="h2">Matutino</Typography>
-							<Typography>Total de vagas: {totalVagasMat}</Typography>
-							{turmasMatutino.map((turma: Turma) => {
-								return (
-									<Typography key={turma.id}>
-										Trila {turma.trilha} - vagas: {turma.capacidadeAtual}
-									</Typography>
-								);
-							})}
-							{user?.role === "ALUNO" && (
-								<Link
-									href={{
-										pathname: "/matricula/turmas",
-										query: { turno: "MAT" },
-									}}
-								>
-									Escolher
-								</Link>
-							)}
-						</Box>
-					</Paper>
-				</Grid>
-				<Grid item xs={6}>
-					<Paper elevation={4}>
-						<Box display={"flex"} flexDirection={"column"} bgcolor={"blueviolet"}>
-							<Typography variant="h2">Vespertino</Typography>
-							<Typography>Total de vagas: {totalVagasVes}</Typography>
-							{turmasVespertino.map((turma: Turma) => {
-								return (
-									<Typography key={turma.id}>
-										Trila {turma.trilha} - vagas: {turma.capacidadeAtual}
-									</Typography>
-								);
-							})}
-							{user?.role === "ALUNO" && (
-								<Link
-									href={{
-										pathname: "/matricula/turmas",
-										query: { turno: "VES" },
-									}}
-								>
-									Escolher
-								</Link>
-							)}
-						</Box>
-					</Paper>
-				</Grid>
+		<Grid
+			container
+			justifyContent="center"
+			alignItems="center"
+			spacing={4}
+			style={{ height: "100vh" }}
+		>
+			<Grid item>
+				<TurnoCard
+					turno={TURNOS.MAT}
+					totalVagas={calculateTotalVagas(turmasMatutino)}
+					turmas={turmasMatutino}
+					user={user}
+					turnoKey="MAT"
+				/>
 			</Grid>
-		</Container>
+			<Grid item>
+				<TurnoCard
+					turno={TURNOS.VES}
+					totalVagas={calculateTotalVagas(turmasVespertino)}
+					turmas={turmasVespertino}
+					user={user}
+					turnoKey="VES"
+				/>
+			</Grid>
+		</Grid>
 	);
 }

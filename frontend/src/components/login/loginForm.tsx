@@ -27,10 +27,10 @@ export default function LoginForm() {
 
 	return (
 		<section className={styles.backgroundBox}>
-			<Box className={styles.styledBox}>
+			<div className={styles.styledBox}>
 				<LockOpenIcon fontSize="large" color="primary" />
 
-				<Box className={styles.boxItems}>
+				<div className={styles.boxItems}>
 					<form action={action}>
 						<TextField
 							fullWidth
@@ -55,13 +55,18 @@ export default function LoginForm() {
 						/>
 
 						<Box mt={2}>
-							<Button fullWidth variant="contained" color="primary" type="submit">
+							<Button
+								fullWidth
+								variant="contained"
+								color="primary"
+								type="submit"
+							>
 								Entrar
 							</Button>
 						</Box>
 					</form>
-				</Box>
-			</Box>
+				</div>
+			</div>
 		</section>
 	);
 }

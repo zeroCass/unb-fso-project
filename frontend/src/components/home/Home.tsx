@@ -1,7 +1,11 @@
 "use client";
 
 import { useUser } from "@/context/userContext";
+import { Turma, User } from "@/types";
+import { Box, Container, Typography } from "@mui/material";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import styles from "./home.module.css";
 
 type UserRole = {
 	role: "ADMIN" | "ALUNO";
@@ -10,44 +14,98 @@ type UserRole = {
 function CustomButton({ role }: UserRole) {
 	const router = useRouter();
 	return (
-		<div>
-			{role === "ALUNO" && <button onClick={() => router.push("/matricula/turnos")}>MATRICULE-SE</button>}
-
-			{role === "ADMIN" && <button>PLACE HOLDER</button>}
-		</div>
+		<>
+			{role === "ALUNO" ? (
+				<button onClick={() => router.push("/matricula/turnos")} className={styles.button_styled}>
+					Clique Aqui
+				</button>
+			) : (
+				<button>PLACE HOLDER</button>
+			)}
+		</>
 	);
 }
 
-export default function Home() {
-	const { user } = useUser();
-	const isMatriculado = user?.turma ? true : false;
+const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
+	const isMatriculado = Boolean(turma);
 
 	return (
-		<div>
-			<div>
-				{user?.role === "ALUNO" && !isMatriculado && (
-					<div>
-						<h2>
-							Olá {user?.nome}. Você ainda não está matriculado.
-							<span>Clique aqui</span> para se matricular.
-						</h2>
+		<>
+			<Box>
+				<Typography className={styles.title} sx={{ marginTop: "5rem", marginLeft: "2rem" }}>
+					Olá, <br /> {user?.nome}.
+				</Typography>
+
+				<Typography className={styles.base_text} sx={{ marginLeft: "2rem" }}>
+					{!isMatriculado ? "Você não está matriculado ainda." : "Você está matriculado na trilha"}
+				</Typography>
+
+				{!isMatriculado ? (
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "center",
+							marginTop: "15%",
+						}}
+					>
 						<CustomButton role={user.role} />
-					</div>
+						<Typography className={styles.base_text} sx={{ marginTop: "-1.5rem" }}>
+							para se matricular
+						</Typography>
+					</Box>
+				) : (
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "center",
+						}}
+					>
+						<p className={styles.styled_text}>{turma?.trilha}</p>
+						<Box className={styles.base_text} sx={{ marginTop: "15%" }}>
+							<p>Turma: {turma?.nome}</p>
+							<p>Turno: {turma?.turno}</p>
+						</Box>
+					</Box>
 				)}
-				{user?.role === "ALUNO" && isMatriculado && (
-					<div>
-						<h2>
-							Olá {user?.nome}. Você já está matriculado na Turma {user.turma}
-						</h2>
-					</div>
-				)}
-				{user?.role === "ADMIN" && (
-					<div>
-						<h2>Olá ADM {user?.nome}.</h2>
-						<CustomButton role={user.role} />
-					</div>
-				)}
-			</div>
-		</div>
+			</Box>
+
+			<Box sx={{ justifyContent: "center", marginTop: "8.5rem" }}>
+				<Image src="/images/undraw_studying.svg" alt="Estudando" width={600} height={600} />
+			</Box>
+		</>
+	);
+};
+
+const AdminContent = ({ user }: any) => {
+	return (
+		<>
+			<Box>
+				<Typography className={styles.title} sx={{ marginTop: "5rem", marginLeft: "2rem" }}>
+					Olá ADM <br /> {user?.nome}.
+				</Typography>
+				<CustomButton role={user.role} />
+			</Box>
+		</>
+	);
+};
+
+export default function Home({ turma }: { turma: Turma | null }) {
+	const { user } = useUser();
+
+	return (
+		<Container
+			maxWidth={false}
+			sx={{
+				display: "flex",
+				justifyContent: "space-around",
+				width: "100%",
+				height: "100%",
+			}}
+		>
+			{user?.role === "ALUNO" && <AlunoContent user={user} turma={turma} />}
+			{user?.role === "ADMIN" && <AdminContent user={user} />}
+		</Container>
 	);
 }

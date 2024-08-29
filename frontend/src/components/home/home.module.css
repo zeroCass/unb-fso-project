@@ -1,0 +1,39 @@
+.title {
+	font-family: var(--font-title);
+	font-size: 128px;
+	line-height: 147px;
+}
+
+.base_text {
+	font-family: var(--font-base);
+	font-size: 45px;
+	line-height: 65px;
+}
+
+.styled_text {
+	font-family: var(--font-text);
+	font-size: 65px;
+	line-height: 85px;
+
+	background: var(--gradient-primary);
+	background-clip: text;
+	color: transparent;
+}
+
+.button_styled {
+	font-family: var(--font-text);
+	font-size: 65px;
+	line-height: 85px;
+
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	background: var(--gradient-primary);
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	border: none;
+
+	transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+
+.button_styled:hover {
+	transform: scale(1.1);
+}
