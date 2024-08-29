@@ -72,7 +72,7 @@ const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 			</Box>
 
 			<Box sx={{ justifyContent: "center", marginTop: "8.5rem" }}>
-				<Image src="/images/undraw_Studying.svg" alt="Estudando" width={600} height={600} />
+				<Image src="/images/undraw_studying.svg" alt="Estudando" width={600} height={600} />
 			</Box>
 		</>
 	);
