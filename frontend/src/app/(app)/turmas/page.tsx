@@ -1,5 +1,5 @@
 import { fetchTurmas } from "@/actions/fetchTurmas";
-import TurmaItem from "@/components/TurmaItem";
+import TurmaItem from "@/components/turmas/TurmaItem";
 import type { Turma } from "@/types";
 
 export default async function Page() {
@@ -12,6 +12,7 @@ export default async function Page() {
 				turmas.map((turma: Turma) => {
 					return <TurmaItem turma={turma} key={turma.id} />;
 				})}
+			
 		</section>
 	);
 }
