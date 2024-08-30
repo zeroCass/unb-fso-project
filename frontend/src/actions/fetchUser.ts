@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 export async function fetchUser(): Promise<User | null> {
 	const token = await getToken();
 	if (!token) return null;
+	console.log("token: ", token);
 
 	try {
 		const response = await fetch(`${process.env.DJANGO_API}/api/user/`, {
