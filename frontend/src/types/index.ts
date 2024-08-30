@@ -1,5 +1,6 @@
 export type Session = {
 	token: string;
+	user:{ id: number, role:  "ADMIN" | "ALUNO" }
 	expires: string; //ISO 8601 date string
 	iat: number;
 	exp: number;
