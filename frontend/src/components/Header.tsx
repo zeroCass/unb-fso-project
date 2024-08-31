@@ -1,24 +1,15 @@
 "use client";
 import logout from "@/actions/logout";
 import { useUser } from "@/context/userContext";
-import Link from "next/link";
-import {
-	AppBar,
-	Box,
-	Button,
-	Container,
-	IconButton,
-	Toolbar,
-	Tooltip,
-	Typography,
-} from "@mui/material";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import { AppBar, Box, Button, Container, IconButton, Toolbar, Tooltip, Typography } from "@mui/material";
+import Link from "next/link";
 
 const pages = [{ name: "Home", path: "/" }];
 const adminPages = [
-	{ name: "Turmas", path: "/turmas" },
-	{ name: "Turnos", path: "/matricula/turnos" },
+	{ name: "Cadastrar Aluno", path: "/gerenciamento/cadastrar-aluno" },
+	{ name: "Relatório", path: "/gerenciamento/relatorio-matricula" },
 ];
 
 const DesktopMenu = ({ user }: any) => (
