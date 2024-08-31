@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 
 type ResponseData = {
 	token: string;
+	user: { id: number; role: "ADMIN" | "ALUNO" };
 };
 
 export default async function login(state: {}, formData: FormData) {
@@ -31,7 +32,7 @@ export default async function login(state: {}, formData: FormData) {
 
 		// Create the session
 		const expires = new Date(Date.now() + 10 * 60 * 1000);
-		const session = await encrypt({ token: data.token, expires });
+		const session = await encrypt({ token: data.token, user: data.user, expires });
 
 		// Save the session in a cookie
 		cookies().set("session", session, { expires, httpOnly: true });

@@ -1,9 +1,14 @@
 export type Session = {
 	token: string;
-	user:{ id: number, role:  "ADMIN" | "ALUNO" }
+	user: { id: number; role: "ADMIN" | "ALUNO" };
 	expires: string; //ISO 8601 date string
 	iat: number;
 	exp: number;
+};
+
+export type UserFromCookie = {
+	id: number;
+	role: "ADMIN" | "ALUNO";
 };
 
 export type User = {

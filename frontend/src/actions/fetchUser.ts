@@ -1,4 +1,4 @@
-import { setCookieUserInfo } from "@/lib/_session";
+"use server";
 import { getToken } from "@/lib/getToken";
 import { User } from "@/types";
 import { revalidatePath } from "next/cache";
@@ -18,10 +18,10 @@ export async function fetchUser(): Promise<User | null> {
 		revalidatePath("/");
 
 		const user: User = await response.json();
-		await setCookieUserInfo({id: user.id, role: user.role})
+
 		return user;
 	} catch (err: unknown) {
-		console.warn(err);
+		console.warn("error: ", err);
 		throw new Error("Falha ao tentar carregar usuário: ");
 	}
 }

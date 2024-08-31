@@ -1,3 +1,5 @@
+from math import floor
+
 from django.contrib.auth import authenticate, logout
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, serializers, status
@@ -10,7 +12,6 @@ from rest_framework.views import APIView
 from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario
 from .permissions import IsAdminOrSpecificUser
 from .serializers import AdminSerializer, AlunoSerializer, TurmaSerializer
-from math import floor
 
 
 @api_view(['GET'])
@@ -83,6 +84,7 @@ class UserLoginView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             response_data = {
                 'token': token.key,
+                'user': { "id": user.id, "role": user.role }
             }
             return Response(response_data, status=status.HTTP_202_ACCEPTED)
 

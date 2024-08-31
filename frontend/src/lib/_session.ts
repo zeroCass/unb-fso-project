@@ -1,4 +1,3 @@
-import { Session } from "@/types";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -48,27 +47,4 @@ export async function updateSession(request: NextRequest) {
 		expires: parsed.expires,
 	});
 	return res;
-}
-
-
-export async function setCookieUserInfo(userInfo:{ id: number, role: "ADMIN" | "ALUNO"} ) {
-	const session = cookies().get("session")?.value;
-	if (!session) return
-
-	const encryptData = await decrypt(session)
-	const data = await JSON.parse(encryptData)
-	console.log('session: ', data)
-
-	const newSession = await encrypt({ ...data, userInfo })
-	console.log('newSession: ', { ...data, user: userInfo })
-	// cookies().set("session", newSession)
-}
-
-export async function getCookieUserInfo(): Promise<null | { id: number, role:  "ADMIN" | "ALUNO" }> {
-	const session = cookies().get("session")?.value;
-	if (!session) return null
-
-
-	const decryptSession: Session = await decrypt(session)
-	return decryptSession.user
 }

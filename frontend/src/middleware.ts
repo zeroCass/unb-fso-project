@@ -1,7 +1,8 @@
 "use server";
 
 import { NextRequest, NextResponse } from "next/server";
-import { getCookieUserInfo, updateSession } from "./lib/_session";
+import { updateSession } from "./lib/_session";
+import { getUserFromCookies } from "./lib/getUserFromCookies";
 import routes from "./lib/routes";
 
 export async function middleware(request: NextRequest) {
@@ -9,7 +10,8 @@ export async function middleware(request: NextRequest) {
 	const isAuth = res ? true : false;
 
 	// gambiarra para saber se a role
-	const user = await getCookieUserInfo()
+	const cookie = res ? res.cookies.get("session") : null;
+	const user = cookie ? await getUserFromCookies(cookie) : null;
 
 	const currentPath = request.nextUrl.pathname;
 	const isProctedRoute = routes.protectedRoutes.includes(currentPath);
