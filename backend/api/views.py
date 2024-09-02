@@ -10,9 +10,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario
-from .permissions import IsAdminOrSpecificUser
-from .serializers import AdminSerializer, AlunoSerializer, TurmaSerializer, RelatorioSerializer
-from math import floor
+from .permissions import IsAdmin, IsAdminOrSpecificUser
+from .serializers import (AdminSerializer, AlunoSerializer,
+                          RelatorioSerializer, TurmaSerializer)
 
 
 @api_view(['GET'])
@@ -437,5 +437,6 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
             return Response({{'Erro Interno: ', str(e)}}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class TurmaListAPIView(generics.ListAPIView):
+    permission_classes = [IsAdmin]
     queryset = Turma.objects.all()
-    serializer_class = RelatorioSerializer()
+    serializer_class = RelatorioSerializer
