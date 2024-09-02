@@ -16,78 +16,114 @@ function CustomButton({ role }: UserRole) {
 	return (
 		<>
 			{role === "ALUNO" ? (
-				<button onClick={() => router.push("/matricula/turnos")} className={styles.button_styled}>
+				<button
+					onClick={() => router.push("/matricula/turnos")}
+					className={styles.button_styled}
+				>
 					Clique Aqui
 				</button>
-			) : (
-				<button>PLACE HOLDER</button>
-			)}
+			) : null}
 		</>
 	);
 }
+
+const HomeImage = () => {
+	return (
+		<Box sx={{ justifyContent: "center", marginTop: "8.5rem" }}>
+			<Image
+				src="/images/undraw_studying.svg"
+				alt="Estudando"
+				width={600}
+				height={600}
+			/>
+		</Box>
+	);
+};
 
 const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 	const isMatriculado = Boolean(turma);
 
 	return (
-		<>
-			<Box>
-				<Typography className={styles.title} sx={{ marginTop: "5rem", marginLeft: "2rem" }}>
-					Olá, <br /> {user?.nome}.
-				</Typography>
+		<Box>
+			<Typography
+				className={styles.title}
+				sx={{ marginTop: "5rem", marginLeft: "2rem" }}
+			>
+				Olá, <br /> {user?.nome}.
+			</Typography>
 
-				<Typography className={styles.base_text} sx={{ marginLeft: "2rem" }}>
-					{!isMatriculado ? "Você não está matriculado ainda." : "Você está matriculado na trilha"}
-				</Typography>
+			<Typography className={styles.base_text} sx={{ marginLeft: "2rem" }}>
+				{!isMatriculado
+					? "Você não está matriculado ainda."
+					: "Você está matriculado na trilha"}
+			</Typography>
 
-				{!isMatriculado ? (
-					<Box
-						sx={{
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							marginTop: "15%",
-						}}
+			{!isMatriculado ? (
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						marginTop: "15%",
+					}}
+				>
+					<CustomButton role={user.role} />
+					<Typography
+						className={styles.base_text}
+						sx={{ marginTop: "-1.5rem" }}
 					>
-						<CustomButton role={user.role} />
-						<Typography className={styles.base_text} sx={{ marginTop: "-1.5rem" }}>
-							para se matricular
-						</Typography>
+						para se matricular
+					</Typography>
+				</Box>
+			) : (
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+					}}
+				>
+					<p className={styles.styled_text}>{turma?.trilha}</p>
+					<Box className={styles.base_text} sx={{ marginTop: "15%" }}>
+						<p>Turma: {turma?.nome}</p>
+						<p>Turno: {turma?.turno}</p>
 					</Box>
-				) : (
-					<Box
-						sx={{
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-						}}
-					>
-						<p className={styles.styled_text}>{turma?.trilha}</p>
-						<Box className={styles.base_text} sx={{ marginTop: "15%" }}>
-							<p>Turma: {turma?.nome}</p>
-							<p>Turno: {turma?.turno}</p>
-						</Box>
-					</Box>
-				)}
-			</Box>
-
-			<Box sx={{ justifyContent: "center", marginTop: "8.5rem" }}>
-				<Image src="/images/undraw_studying.svg" alt="Estudando" width={600} height={600} />
-			</Box>
-		</>
+				</Box>
+			)}
+		</Box>
 	);
 };
 
 const AdminContent = ({ user }: any) => {
 	return (
-		<>
-			<Box>
-				<Typography className={styles.title} sx={{ marginTop: "5rem", marginLeft: "2rem" }}>
-					Olá ADM <br /> {user?.nome}.
-				</Typography>
-				<CustomButton role={user.role} />
+		<Box>
+			<Typography
+				className={styles.title}
+				sx={{ marginTop: "5rem", marginLeft: "2rem" }}
+			>
+				Olá ADM <br /> {user?.nome}.
+			</Typography>
+
+			<Typography
+				className={styles.styled_text}
+				sx={{ marginLeft: "2rem", marginTop: "2rem" }}
+			>
+				Verifique o status do período de matrícula.
+			</Typography>
+
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+				}}
+			>
+				<Box className={styles.base_text} sx={{ marginTop: "10%" }}>
+					<p>Total de alunos cadastrados: ?</p>
+					<p>Total de alunos matriculados: ?</p>
+				</Box>
 			</Box>
-		</>
+		</Box>
 	);
 };
 
@@ -104,8 +140,11 @@ export default function Home({ turma }: { turma: Turma | null }) {
 				height: "100%",
 			}}
 		>
-			{user?.role === "ALUNO" && <AlunoContent user={user} turma={turma} />}
-			{user?.role === "ADMIN" && <AdminContent user={user} />}
+			<>
+				{user?.role === "ALUNO" && <AlunoContent user={user} turma={turma} />}
+				{user?.role === "ADMIN" && <AdminContent user={user} />}
+				<HomeImage />
+			</>
 		</Container>
 	);
 }
