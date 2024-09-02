@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+import re
 from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario
 from .permissions import IsAdmin, IsAdminOrSpecificUser
 from .serializers import (AdminSerializer, AlunoSerializer,
@@ -62,6 +62,16 @@ class AlunoRegistrationView(APIView):
         # Verifica se o usuário tem o papel de ADMIN
         if user.role != 'ADMIN':
             return Response({'error': 'Você não está autorizado a registrar alunos.'}, status=status.HTTP_403_FORBIDDEN)
+        cpf = request.data.get('cpf', None)
+        
+        if cpf is None:
+            return Response({'error': 'CPF é obrigatório.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Regex para validar CPF no formato "12345678909" (11 dígitos consecutivos)
+        cpf_pattern = r'^\d{11}$'
+        
+        if not re.match(cpf_pattern, cpf):
+            return Response({'error': 'CPF inválido. O formato deve ser 11 dígitos consecutivos, como 12345678909.'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = AlunoSerializer(data=request.data)
         print(request.data)
@@ -375,6 +385,7 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
             turnos = Turno.choices
             trilhas = Trilha.choices
             nomes = NomeTurma.choices
+            turmas_criadas = []
             # se for <= 8 alunos matriculados, gere 8 turmas com 1 vaga cada.
             if (lenAlunos <= 8):
                 for i in range(4):
@@ -388,6 +399,7 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                                        ano=2
                                        )
                     nova_turma.save()
+                    turmas_criadas.append(nova_turma)
                 for i in range(4):
                     # turno vespertino
                     nova_turma = Turma(nome=nomes[i+4][0],
@@ -398,11 +410,13 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                                        ano=2
                                        )
                     nova_turma.save()
+                    turmas_criadas.append(nova_turma)
+
             else:
                 vagasGerais = vagas = floor(lenAlunos / 8)
                 restoVagas = lenAlunos % 8
                 for i in range(4):
-
+                    vagas = vagasGerais
                     # turno matutino
                     if (restoVagas > 0):
                         vagas = vagasGerais+1
@@ -416,7 +430,7 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                                        ano=2
                                        )
                     nova_turma.save()
-                    vagas = vagasGerais
+                    turmas_criadas.append(nova_turma)
                 for i in range(4):
                     if (restoVagas > 0):
                         vagas = vagasGerais+1
@@ -430,9 +444,11 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                                        ano=2
                                        )
                     nova_turma.save()
-                    vagas = vagasGerais
+                    turmas_criadas.append(nova_turma)
 
-            return Response({"Vagas Criadas com Sucesso!"}, status=status.HTTP_200_OK)
+
+            serializerTurmas = TurmaSerializer(turmas_criadas, many=True)
+            return Response({"message": "Vagas Criadas com Sucesso!", "turmas": serializerTurmas.data}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({{'Erro Interno: ', str(e)}}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
