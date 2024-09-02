@@ -2,19 +2,21 @@
 
 import login from "@/actions/login";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { Box, Button, TextField } from "@mui/material";
+import CpfInput from "../CpfInput";
 import styles from "./loginForm.module.css";
 
 export default function LoginForm() {
+	const [cpf, setCpf] = useState("");
 	const router = useRouter();
 	const [state, action] = useFormState(login, {
 		sucess: false,
-		data: null,
-		error: null,
+		error: false,
+		message: "",
 	});
 
 	useEffect(() => {
@@ -32,16 +34,18 @@ export default function LoginForm() {
 
 				<div className={styles.boxItems}>
 					<form action={action}>
-						<TextField
-							fullWidth
-							name="cpf"
-							label="CPF"
-							type="cpf"
-							placeholder="CPF"
-							margin="normal"
-							variant="outlined"
-							required
-						/>
+						<CpfInput value={cpf} onChange={setCpf}>
+							<TextField
+								fullWidth
+								name="cpf"
+								label="CPF"
+								type="cpf"
+								placeholder="000.000.000/00"
+								margin="normal"
+								variant="outlined"
+								required
+							/>
+						</CpfInput>
 
 						<TextField
 							fullWidth
@@ -55,15 +59,11 @@ export default function LoginForm() {
 						/>
 
 						<Box mt={2}>
-							<Button
-								fullWidth
-								variant="contained"
-								color="primary"
-								type="submit"
-							>
+							<Button fullWidth variant="contained" color="primary" type="submit">
 								Entrar
 							</Button>
 						</Box>
+						{state.error && <span style={{ color: "#ff0000" }}>ERROR: {state.message}</span>}
 					</form>
 				</div>
 			</div>
