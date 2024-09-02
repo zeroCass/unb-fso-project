@@ -1,3 +1,5 @@
+from math import floor
+
 from django.contrib.auth import authenticate, logout
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, serializers, status
@@ -8,9 +10,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario
-from .permissions import IsAdminOrSpecificUser
-from .serializers import AdminSerializer, AlunoSerializer, TurmaSerializer, RelatorioSerializer
-from math import floor
+from .permissions import IsAdmin, IsAdminOrSpecificUser
+from .serializers import (AdminSerializer, AlunoSerializer,
+                          RelatorioSerializer, TurmaSerializer)
 
 
 @api_view(['GET'])
@@ -83,6 +85,7 @@ class UserLoginView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             response_data = {
                 'token': token.key,
+                'user': { "id": user.id, "role": user.role }
             }
             return Response(response_data, status=status.HTTP_202_ACCEPTED)
 
@@ -434,5 +437,6 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
             return Response({{'Erro Interno: ', str(e)}}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class TurmaListAPIView(generics.ListAPIView):
+    permission_classes = [IsAdmin]
     queryset = Turma.objects.all()
-    serializer_class = RelatorioSerializer()
+    serializer_class = RelatorioSerializer

@@ -36,7 +36,7 @@ urlpatterns = [
      # get para geracao de turmas automatica:
      path('gerar-turmas/', views.create_turmas, name='matricula'),
 
-     path('relatorio', views.TurmaListAPIView.as_view(), name = 'relatorio')
+     path('relatorio/', views.TurmaListAPIView.as_view(), name = 'relatorio')
     
 
 
