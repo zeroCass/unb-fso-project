@@ -1,7 +1,7 @@
 "use client";
 
 import registerAluno from "@/actions/registerAluno";
-import { Modal } from "@mui/material";
+import { Container, Modal } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
@@ -92,15 +92,25 @@ export default function Cadastro() {
 					</div>
 				</div>
 			</Modal>
-			<form action={action}>
-				<input name="nome" placeholder="Nome" type="text" required />
-				<input name="cpf" placeholder="CPF" type="text" required />
-				<input value={password} name="password" placeholder="Senha" type="password" readOnly required />
-				<button onClick={() => generatePassword()} type="button">
-					Gerar Senha
-				</button>
-				<button type="submit">Cadastrar</button>
-			</form>
+			<Container>
+				<form
+					action={action}
+					style={{
+						width: "50%",
+						display: "flex",
+						flexDirection: "column",
+					}}
+				>
+					<input name="nome" placeholder="Nome" type="text" required />
+					<input name="cpf" placeholder="CPF" type="text" required />
+					<input name="email" placeholder="E-mail" type="email" required />
+					<input value={password} name="password" placeholder="Senha" type="password" readOnly required />
+					<button onClick={() => generatePassword()} type="button">
+						Gerar Senha
+					</button>
+					<button type="submit">Cadastrar</button>
+				</form>
+			</Container>
 		</>
 	);
 }
