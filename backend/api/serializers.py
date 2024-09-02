@@ -36,7 +36,14 @@ class AlunoSerializer(serializers.ModelSerializer):
             turma=validated_data['turma'],
         )
         return aluno
-    
+
+
+class AlunoRelatorioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Aluno
+        fields = ['cpf', 'nome']
+
+ 
 
 class TurmaSerializer(serializers.ModelSerializer): 
     class Meta:
@@ -45,7 +52,7 @@ class TurmaSerializer(serializers.ModelSerializer):
 
 
 class RelatorioSerializer(serializers.ModelSerializer): 
-    alunos = AlunoSerializer(many=True, read_only=True, source='aluno_set')
+    alunos = AlunoRelatorioSerializer(many=True, read_only=True, source='aluno_set')
     class Meta:
         model = Turma
         fields = ('id', 'nome', 'turno', 'trilha', 'capacidadeMaxima', 'capacidadeAtual', 'ano', 'alunos')
