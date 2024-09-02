@@ -50,3 +50,14 @@ export type Turma = {
 	capacidadeAtual: number;
 	ano: number;
 };
+
+type AlunoMatriculado = {
+	cpf: string;
+	nome: string;
+	role: "ALUNO";
+	turma: number;
+};
+
+export type Relatorio = Turma & {
+	alunos: AlunoMatriculado[];
+};
