@@ -105,3 +105,7 @@ Ex.:
       GET - 'GET TRILHAS' : '/api/trilhas'- Sem permissões
       GET - 'GET NOME DAS TURMAS' : '/api/nomes_turma'- Sem permissões
       GET - 'GET Roles' : '/api/roles'- Sem permissões
+
+
+      GET - 'GERAR TURMAS' : '/api/gerar-turmas/' - Somente ADMIN
+      GET - 'RELATORIO TURMAS': 'api/relatorio/' - Somente ADMIN

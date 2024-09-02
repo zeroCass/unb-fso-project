@@ -41,6 +41,12 @@ class AlunoSerializer(serializers.ModelSerializer):
 class TurmaSerializer(serializers.ModelSerializer): 
     class Meta:
         model = Turma
-        fields = "__all__"
-    
+        fields = ('id', 'nome', 'turno', 'trilha', 'capacidadeMaxima', 'capacidadeAtual', 'ano')
+
+
+class RelatorioSerializer(serializers.ModelSerializer): 
+    alunos = AlunoSerializer(many=True, read_only=True, source='aluno_set')
+    class Meta:
+        model = Turma
+        fields = ('id', 'nome', 'turno', 'trilha', 'capacidadeMaxima', 'capacidadeAtual', 'ano', 'alunos')
 

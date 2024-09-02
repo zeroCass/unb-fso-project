@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission
 
+
 class IsAdminOrSpecificUser(BasePermission):
     """
     permite que apenas usuarios do tipo admin 
@@ -9,3 +10,11 @@ class IsAdminOrSpecificUser(BasePermission):
         if request.user.role == 'ADMIN':
             return True
         return request.user.id == obj.id
+
+
+class IsAdmin(BasePermission):
+    """
+    permite que apenas usuarios do tipo admin possa acessar o recurso
+    """
+    def has_permission(self, request, view):
+        return request.user.role == 'ADMIN'
