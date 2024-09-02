@@ -11,7 +11,8 @@ from rest_framework.views import APIView
 
 from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario
 from .permissions import IsAdminOrSpecificUser
-from .serializers import AdminSerializer, AlunoSerializer, TurmaSerializer
+from .serializers import AdminSerializer, AlunoSerializer, TurmaSerializer, RelatorioSerializer
+from math import floor
 
 
 @api_view(['GET'])
@@ -401,36 +402,40 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                 vagasGerais = vagas = floor(lenAlunos / 8)
                 restoVagas = lenAlunos % 8
                 for i in range(4):
-                    
-                        # turno matutino
-                    if(restoVagas > 0):
+
+                    # turno matutino
+                    if (restoVagas > 0):
                         vagas = vagasGerais+1
                         restoVagas -= 1
                     nova_turma = Turma(nome=nomes[i][0],
 
-                                        turno=turnos[0][0],
-                                        trilha=trilhas[i][0],
-                                        capacidadeMaxima=vagas,
-                                        capacidadeAtual=vagas,
-                                        ano=2
-                                        )
+                                       turno=turnos[0][0],
+                                       trilha=trilhas[i][0],
+                                       capacidadeMaxima=vagas,
+                                       capacidadeAtual=vagas,
+                                       ano=2
+                                       )
                     nova_turma.save()
                     vagas = vagasGerais
                 for i in range(4):
-                    if(restoVagas > 0):
+                    if (restoVagas > 0):
                         vagas = vagasGerais+1
                         restoVagas -= 1
                         # turno vespertino
                     nova_turma = Turma(nome=nomes[i+4][0],
-                                        turno=turnos[1][0],
-                                        trilha=trilhas[i][0],
-                                        capacidadeMaxima=vagas,
-                                        capacidadeAtual=vagas,
-                                        ano=2
-                                        )
+                                       turno=turnos[1][0],
+                                       trilha=trilhas[i][0],
+                                       capacidadeMaxima=vagas,
+                                       capacidadeAtual=vagas,
+                                       ano=2
+                                       )
                     nova_turma.save()
                     vagas = vagasGerais
 
             return Response({"Vagas Criadas com Sucesso!"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({{'Erro Interno: ', str(e)}}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class TurmaListAPIView(generics.ListAPIView):
+    queryset = Turma.objects.all()
+    serializer_class = RelatorioSerializer()
