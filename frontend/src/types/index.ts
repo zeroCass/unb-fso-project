@@ -34,13 +34,13 @@ enum NomeTurma {
 	"H",
 }
 
-enum TrilhaTurma {
-	"ENEGRESER",
-	"DNMEV",
-	"AMN",
-	"AGRO",
-}
-
+export enum TrilhaTurma {
+	ENEGRESER = "ENEGRESER",
+	DNMEV = "DNMEV",
+	AMN = "AMN",
+	AGRO = "AGRO",
+  }
+  
 export type Turma = {
 	id: number;
 	nome: NomeTurma;
@@ -54,8 +54,6 @@ export type Turma = {
 type AlunoMatriculado = {
 	cpf: string;
 	nome: string;
-	role: "ALUNO";
-	turma: number;
 };
 
 export type Relatorio = Turma & {

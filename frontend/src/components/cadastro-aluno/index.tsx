@@ -5,6 +5,7 @@ import { Container, Modal } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import CpfInput from "../CpfInput";
 
 type ModalConfig = {
 	message: string;
@@ -12,6 +13,7 @@ type ModalConfig = {
 };
 
 export default function Cadastro() {
+	const [cpf, setCpf] = useState("");
 	const [password, setPassword] = useState("");
 	const [open, setOpen] = useState<boolean>(false);
 	const [modalConfig, setModalConfig] = useState<ModalConfig>({
@@ -102,7 +104,7 @@ export default function Cadastro() {
 					}}
 				>
 					<input name="nome" placeholder="Nome" type="text" required />
-					<input name="cpf" placeholder="CPF" type="text" required />
+					<CpfInput value={cpf} onChange={setCpf} />
 					<input name="email" placeholder="E-mail" type="email" required />
 					<input value={password} name="password" placeholder="Senha" type="password" readOnly required />
 					<button onClick={() => generatePassword()} type="button">

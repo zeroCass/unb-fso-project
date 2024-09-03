@@ -1,0 +1,36 @@
+.turmaItem {
+	background-color: var(--background-div);
+	color: black;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	border: 2px solid transparent;
+	box-sizing: border-box;
+	border-radius: 15px;
+}
+
+.turmaItem:hover {
+	border-color: var(--primary-dark);
+}
+
+.selected {
+	background-color: var(--primary-main);
+	color: white;
+	border-color: var(--primary-main);
+}
+
+.selected:hover {
+	border-color: var(--primary-ultraLight);
+}
+
+.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+	background-color: var(--background-div);
+	color: #757575;
+	cursor: not-allowed;
+	border-color: transparent;
+}
+
+.disabled:hover {
+	border-color: transparent;
+}
