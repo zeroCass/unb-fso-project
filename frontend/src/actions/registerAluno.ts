@@ -1,6 +1,7 @@
 "use server";
 
 import { getToken } from "@/lib/getToken";
+import isValidCPF from "@/utils/isValidCpf";
 
 type Response = {
 	sucess: boolean;
@@ -12,9 +13,12 @@ export default async function registerAluno(state: {}, formData: FormData): Prom
 	const token = await getToken();
 	if (!token) return { error: true, sucess: false, message: "Token Not Found" };
 
-	const cpf = formData.get("cpf") as string | null;
+	const cpfData = formData.get("cpf") as string;
 	const password = formData.get("password") as string | null;
 	const nome = formData.get("nome") as string | null;
+
+	const cpf = cpfData.replace(/[^\d]+/g, "");
+	if (!isValidCPF(cpf)) return { error: true, sucess: false, message: "CPF invalido" };
 
 	try {
 		if (!cpf) throw new Error("Preencha os dados.");

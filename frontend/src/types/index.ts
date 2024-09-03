@@ -54,8 +54,6 @@ export type Turma = {
 type AlunoMatriculado = {
 	cpf: string;
 	nome: string;
-	role: "ALUNO";
-	turma: number;
 };
 
 export type Relatorio = Turma & {
