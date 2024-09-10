@@ -25,7 +25,7 @@ function FooterButtons({
 	};
 
 	return (
-		<Box display="flex" justifyContent="center" gap={2} mt={20}>
+		<Box display="flex" justifyContent="center" gap={2} mt={10}>
 			<Button
 				variant="outlined"
 				color="primary"
@@ -62,7 +62,7 @@ export default function Matricula({
 	};
 
 	return (
-		<Container maxWidth={false} sx={{ width: "100%", height: "100vh" }}>
+		<Container maxWidth={false} sx={{ width: "100%" }}>
 			<Box mb={2}>
 				<TurmaHeader turno={turno} />
 			</Box>
