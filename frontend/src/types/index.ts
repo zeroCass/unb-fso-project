@@ -1,6 +1,6 @@
 export type Session = {
 	token: string;
-	user: { id: number; role: "ADMIN" | "ALUNO" };
+	user: User;
 	expires: string; //ISO 8601 date string
 	iat: number;
 	exp: number;
@@ -39,8 +39,8 @@ export enum TrilhaTurma {
 	DNMEV = "DNMEV",
 	AMN = "AMN",
 	AGRO = "AGRO",
-  }
-  
+}
+
 export type Turma = {
 	id: number;
 	nome: NomeTurma;
