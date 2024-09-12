@@ -14,7 +14,7 @@ import SyncIcon from "@mui/icons-material/Sync";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
-import CpfInput from "../CpfInput";
+import CpfInput from "./CpfInput";
 
 type ModalConfig = {
 	message: string;
@@ -95,8 +95,8 @@ export default function Cadastro() {
 	}, [state.sucess, router, state.error, state.message]);
 
 	const generatePassword = () => {
-		const randomPassword = "123";
-		setPassword(randomPassword);
+		const password = "123";
+		setPassword(password);
 	};
 
 	const handleOpenModal = ({
@@ -140,9 +140,19 @@ export default function Cadastro() {
 						backgroundColor: "#f5f5f5",
 					}}
 				>
+					<Typography
+						variant="h5"
+						align="center"
+						sx={{ fontFamily: "var(--fontTitle)" }}
+						gutterBottom
+					>
+						Cadastrar Aluno
+					</Typography>
+
 					<Box
 						component="form"
 						action={action}
+						mt={5}
 						sx={{ display: "flex", flexDirection: "column", gap: 2 }}
 						noValidate
 						autoComplete="off"
@@ -176,13 +186,13 @@ export default function Cadastro() {
 								InputProps={{
 									readOnly: true,
 								}}
+								onChange={(e) => e.preventDefault()}
 								required
 								fullWidth
-								disabled // Adiciona a propriedade disabled
 								sx={{
 									"& .MuiInputBase-root": {
-										backgroundColor: "#e0e0e0", // Ajusta o fundo para um cinza claro
-										cursor: "not-allowed", // Altera o cursor para indicar que o campo está desabilitado
+										backgroundColor: "#e0e0e0",
+										cursor: "not-allowed",
 									},
 								}}
 							/>
@@ -191,26 +201,26 @@ export default function Cadastro() {
 								<SyncIcon />
 							</IconButton>
 						</Box>
-					</Box>
-				</Box>
 
-				<Box display="flex" justifyContent="center" gap={2} mt={10}>
-					<Button
-						variant="outlined"
-						color="primary"
-						sx={{ minWidth: "150px" }}
-						onClick={() => window.history.back()}
-					>
-						Voltar
-					</Button>
-					<Button
-						variant="contained"
-						color="primary"
-						type="submit"
-						sx={{ minWidth: "150px" }}
-					>
-						Cadastrar
-					</Button>
+						<Box display="flex" justifyContent="center" gap={2} mt={5}>
+							<Button
+								variant="outlined"
+								color="primary"
+								sx={{ minWidth: "150px" }}
+								onClick={() => window.history.back()}
+							>
+								Voltar
+							</Button>
+							<Button
+								variant="contained"
+								color="primary"
+								type="submit"
+								sx={{ minWidth: "150px" }}
+							>
+								Cadastrar
+							</Button>
+						</Box>
+					</Box>
 				</Box>
 			</Container>
 		</>

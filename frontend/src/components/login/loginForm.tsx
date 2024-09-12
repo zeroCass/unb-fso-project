@@ -7,7 +7,7 @@ import { useFormState } from "react-dom";
 
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { Box, Button, TextField } from "@mui/material";
-import CpfInput from "../CpfInput";
+import CpfInput from "../cadastro-aluno/CpfInput";
 import styles from "./loginForm.module.css";
 
 export default function LoginForm() {
