@@ -135,15 +135,30 @@ export default function Home({ turma }: { turma: Turma | null }) {
 			maxWidth={false}
 			sx={{
 				display: "flex",
-				justifyContent: "space-around",
+				justifyContent: "space-between",
 				width: "100%",
 				height: "100%",
 			}}
 		>
 			<>
-				{user?.role === "ALUNO" && <AlunoContent user={user} turma={turma} />}
-				{user?.role === "ADMIN" && <AdminContent user={user} />}
-				<HomeImage />
+				<Box
+					sx={{
+						flexGrow: 1,
+						width: "60%",
+					}}
+				>
+					{user?.role === "ALUNO" && <AlunoContent user={user} turma={turma} />}
+					{user?.role === "ADMIN" && <AdminContent user={user} />}
+				</Box>
+
+				<Box
+					sx={{
+						width: "40%",
+						paddingLeft: 2,
+					}}
+				>
+					<HomeImage />
+				</Box>
 			</>
 		</Container>
 	);

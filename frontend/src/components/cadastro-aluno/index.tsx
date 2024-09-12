@@ -210,7 +210,7 @@ export default function Cadastro() {
 							/>
 
 							<IconButton onClick={generatePassword} sx={{ marginLeft: 1 }}>
-								<SyncIcon />
+								<SyncIcon sx={{ color: "var(--primary-main)" }} />
 							</IconButton>
 						</Box>
 

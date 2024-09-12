@@ -9,11 +9,11 @@
 }
 
 .turmaItem:hover {
-	border-color: var(--primary-darker);
+	border-color: var(--primary-dark);
 }
 
 .selected {
-	background-color: var(--primary-darker);
+	background-color: var(--primary-dark);
 	color: white;
 }
 
