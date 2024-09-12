@@ -1,10 +1,6 @@
 import Cadastro from "@/components/cadastro-aluno";
+import { Box, Typography } from "@mui/material";
 
 export default async function Page() {
-	return (
-		<section>
-			<h1>Cadastrar Aluno</h1>
-			<Cadastro />
-		</section>
-	);
+	return <Cadastro />;
 }

@@ -1,4 +1,5 @@
 import React, { ReactNode, useRef } from "react";
+import TextField from "@mui/material/TextField";
 
 interface CpfInputProps {
 	value: string;
@@ -11,6 +12,7 @@ interface CpfInputProps {
 		name: string;
 	};
 }
+
 export default function CpfInput({ value, onChange, children }: CpfInputProps) {
 	const cpfRef: any = useRef();
 
@@ -20,8 +22,14 @@ export default function CpfInput({ value, onChange, children }: CpfInputProps) {
 
 		if (length <= 3) return numbers;
 		if (length <= 6) return `${numbers.slice(0, 3)}.${numbers.slice(3)}`;
-		if (length <= 9) return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`;
-		return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}/${numbers.slice(9, 11)}`;
+		if (length <= 9)
+			return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(
+				6
+			)}`;
+		return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(
+			6,
+			9
+		)}/${numbers.slice(9, 11)}`;
 	};
 
 	const handleChange = () => {
@@ -30,24 +38,30 @@ export default function CpfInput({ value, onChange, children }: CpfInputProps) {
 	};
 
 	if (children) {
-		return React.cloneElement(React.Children.only(children) as React.ReactElement, {
-			value,
-			onChange: handleChange,
-			inputRef: cpfRef,
-			onInput: handleChange,
-		});
+		return React.cloneElement(
+			React.Children.only(children) as React.ReactElement,
+			{
+				value,
+				onChange: handleChange,
+				inputRef: cpfRef,
+				onInput: handleChange,
+			}
+		);
 	}
 
 	return (
-		<input
+		<TextField
 			type="text"
-			maxLength={14}
+			label="CPF"
+			variant="outlined"
+			fullWidth
 			value={value}
-			ref={cpfRef}
+			inputRef={cpfRef}
 			onChange={handleChange}
 			required
 			placeholder="000.000.000/00"
 			name="cpf"
+			inputProps={{ maxLength: 14 }}
 		/>
 	);
 }

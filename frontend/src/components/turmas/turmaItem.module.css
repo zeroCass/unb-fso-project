@@ -13,13 +13,12 @@
 }
 
 .selected {
-	background-color: var(--primary-main);
+	background-color: var(--primary-dark);
 	color: white;
-	border-color: var(--primary-main);
 }
 
 .selected:hover {
-	border-color: var(--primary-ultraLight);
+	border-color: var(--primary-lightest);
 }
 
 .disabled {
