@@ -68,6 +68,23 @@ function FeedbackModal({
 	);
 }
 
+const passwordStyles = {
+	"& .MuiInputBase-root": {
+		backgroundColor: "#e0e0e0",
+		cursor: "not-allowed",
+		pointerEvents: "none",
+	},
+	"& .MuiOutlinedInput-notchedOutline": {
+		borderColor: "transparent",
+	},
+	"&:hover .MuiOutlinedInput-notchedOutline": {
+		borderColor: "transparent",
+	},
+	"& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+		borderColor: "transparent",
+	},
+};
+
 export default function Cadastro() {
 	const [cpf, setCpf] = useState("");
 	const [password, setPassword] = useState("");
@@ -189,12 +206,7 @@ export default function Cadastro() {
 								onChange={(e) => e.preventDefault()}
 								required
 								fullWidth
-								sx={{
-									"& .MuiInputBase-root": {
-										backgroundColor: "#e0e0e0",
-										cursor: "not-allowed",
-									},
-								}}
+								sx={passwordStyles}
 							/>
 
 							<IconButton onClick={generatePassword} sx={{ marginLeft: 1 }}>
