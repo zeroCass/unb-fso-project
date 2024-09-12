@@ -39,8 +39,8 @@ export enum TrilhaTurma {
 	DNMEV = "DNMEV",
 	AMN = "AMN",
 	AGRO = "AGRO",
-  }
-  
+}
+
 export type Turma = {
 	id: number;
 	nome: NomeTurma;
@@ -58,4 +58,11 @@ type AlunoMatriculado = {
 
 export type Relatorio = Turma & {
 	alunos: AlunoMatriculado[];
+};
+
+export type Aluno = {
+	cpf: string;
+	nome: string;
+	role: "ALUNO";
+	turma: number | null;
 };
