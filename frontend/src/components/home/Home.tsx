@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@/context/userContext";
-import { Turma, User } from "@/types";
+import { Aluno, Turma, User } from "@/types";
 import { Box, Container, Typography } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -16,10 +16,7 @@ function CustomButton({ role }: UserRole) {
 	return (
 		<>
 			{role === "ALUNO" ? (
-				<button
-					onClick={() => router.push("/matricula/turnos")}
-					className={styles.button_styled}
-				>
+				<button onClick={() => router.push("/matricula/turnos")} className={styles.button_styled}>
 					Clique Aqui
 				</button>
 			) : null}
@@ -30,12 +27,7 @@ function CustomButton({ role }: UserRole) {
 const HomeImage = () => {
 	return (
 		<Box sx={{ justifyContent: "center", marginTop: "8.5rem" }}>
-			<Image
-				src="/images/undraw_studying.svg"
-				alt="Estudando"
-				width={600}
-				height={600}
-			/>
+			<Image src="/images/undraw_studying.svg" alt="Estudando" width={600} height={600} />
 		</Box>
 	);
 };
@@ -45,17 +37,12 @@ const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 
 	return (
 		<Box>
-			<Typography
-				className={styles.title}
-				sx={{ marginTop: "5rem", marginLeft: "2rem" }}
-			>
+			<Typography className={styles.title} sx={{ marginTop: "5rem", marginLeft: "2rem" }}>
 				Olá, <br /> {user?.nome}.
 			</Typography>
 
 			<Typography className={styles.base_text} sx={{ marginLeft: "2rem" }}>
-				{!isMatriculado
-					? "Você não está matriculado ainda."
-					: "Você está matriculado na trilha"}
+				{!isMatriculado ? "Você não está matriculado ainda." : "Você está matriculado na trilha"}
 			</Typography>
 
 			{!isMatriculado ? (
@@ -68,10 +55,7 @@ const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 					}}
 				>
 					<CustomButton role={user.role} />
-					<Typography
-						className={styles.base_text}
-						sx={{ marginTop: "-1.5rem" }}
-					>
+					<Typography className={styles.base_text} sx={{ marginTop: "-1.5rem" }}>
 						para se matricular
 					</Typography>
 				</Box>
@@ -94,20 +78,17 @@ const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 	);
 };
 
-const AdminContent = ({ user }: any) => {
+const AdminContent = ({ user, alunos }: { user: User | null; alunos: Aluno[] | null }) => {
+	const totalAlunos = alunos?.length || 0;
+	const totalAlunosMatriculados = alunos?.reduce((count, aluno) => (aluno.turma ? count + 1 : count), 0);
+
 	return (
 		<Box>
-			<Typography
-				className={styles.title}
-				sx={{ marginTop: "5rem", marginLeft: "2rem" }}
-			>
+			<Typography className={styles.title} sx={{ marginTop: "5rem", marginLeft: "2rem" }}>
 				Olá ADM <br /> {user?.nome}.
 			</Typography>
 
-			<Typography
-				className={styles.styled_text}
-				sx={{ marginLeft: "2rem", marginTop: "2rem" }}
-			>
+			<Typography className={styles.styled_text} sx={{ marginLeft: "2rem", marginTop: "2rem" }}>
 				Verifique o status do período de matrícula.
 			</Typography>
 
@@ -119,15 +100,15 @@ const AdminContent = ({ user }: any) => {
 				}}
 			>
 				<Box className={styles.base_text} sx={{ marginTop: "10%" }}>
-					<p>Total de alunos cadastrados: ?</p>
-					<p>Total de alunos matriculados: ?</p>
+					<p>Total de alunos cadastrados: {totalAlunos}</p>
+					<p>Total de alunos matriculados: {totalAlunosMatriculados}</p>
 				</Box>
 			</Box>
 		</Box>
 	);
 };
 
-export default function Home({ turma }: { turma: Turma | null }) {
+export default function Home({ turma, alunos }: { turma: Turma | null; alunos: Aluno[] | null }) {
 	const { user } = useUser();
 
 	return (
@@ -148,7 +129,7 @@ export default function Home({ turma }: { turma: Turma | null }) {
 					}}
 				>
 					{user?.role === "ALUNO" && <AlunoContent user={user} turma={turma} />}
-					{user?.role === "ADMIN" && <AdminContent user={user} />}
+					{user?.role === "ADMIN" && <AdminContent user={user} alunos={alunos} />}
 				</Box>
 
 				<Box
