@@ -13,7 +13,7 @@ export default async function matricular(turmaID: number) {
 		},
 		body: JSON.stringify({ turma: turmaID }),
 	});
-
+	
 	if (!response.ok) {
 		throw new Error("Falha ao realizar matricula");
 	}

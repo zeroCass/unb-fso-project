@@ -1,5 +1,6 @@
 from math import floor
-
+from django.utils import timezone
+from datetime import timedelta
 from django.contrib.auth import authenticate, logout
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, serializers, status
@@ -9,10 +10,16 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import re
-from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario
+import time
+from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario, NumeroRequisicoes, AlunosReservados
+from django.db import transaction
+
 from .permissions import IsAdmin, IsAdminOrSpecificUser
 from .serializers import (AdminSerializer, AlunoSerializer,
                           RelatorioSerializer, TurmaSerializer)
+
+
+INFINITY = 2**100  # large number
 
 
 @api_view(['GET'])
@@ -63,13 +70,13 @@ class AlunoRegistrationView(APIView):
         if user.role != 'ADMIN':
             return Response({'error': 'Você não está autorizado a registrar alunos.'}, status=status.HTTP_403_FORBIDDEN)
         cpf = request.data.get('cpf', None)
-        
+
         if cpf is None:
             return Response({'error': 'CPF é obrigatório.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Regex para validar CPF no formato "12345678909" (11 dígitos consecutivos)
         cpf_pattern = r'^\d{11}$'
-        
+
         if not re.match(cpf_pattern, cpf):
             return Response({'error': 'CPF inválido. O formato deve ser 11 dígitos consecutivos, como 12345678909.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -95,7 +102,7 @@ class UserLoginView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             response_data = {
                 'token': token.key,
-                'user': { "id": user.id, "role": user.role }
+                'user': {"id": user.id, "role": user.role}
             }
             return Response(response_data, status=status.HTTP_202_ACCEPTED)
 
@@ -386,8 +393,13 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
             trilhas = Trilha.choices
             nomes = NomeTurma.choices
             turmas_criadas = []
+            requisicoesMatutino = INFINITY
+            requisicoesVespertino = INFINITY
+
             # se for <= 8 alunos matriculados, gere 8 turmas com 1 vaga cada.
             if (lenAlunos <= 8):
+                requisicoesMatutino = 1
+                requisicoesVespertino = 1
                 for i in range(4):
                     # turno matutino
                     nova_turma = Turma(nome=nomes[i][0],
@@ -421,6 +433,8 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                     if (restoVagas > 0):
                         vagas = vagasGerais+1
                         restoVagas -= 1
+                    # calcula numero de requisicoes permitidas (minimo de vagas para uma turma)
+                    requisicoesMatutino = min(requisicoesMatutino, vagas)
                     nova_turma = Turma(nome=nomes[i][0],
 
                                        turno=turnos[0][0],
@@ -436,6 +450,8 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                         vagas = vagasGerais+1
                         restoVagas -= 1
                         # turno vespertino
+                    # calcula numero de requisicoes permitidas (minimo de vagas para uma turma)
+                    requisicoesVespertino = min(requisicoesVespertino, vagas)
                     nova_turma = Turma(nome=nomes[i+4][0],
                                        turno=turnos[1][0],
                                        trilha=trilhas[i][0],
@@ -446,13 +462,71 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                     nova_turma.save()
                     turmas_criadas.append(nova_turma)
 
-
             serializerTurmas = TurmaSerializer(turmas_criadas, many=True)
+            # Checa se já existe uma linha com turno='MAT' e deleta se existir
+            NumeroRequisicoes.objects.filter(turno='MAT').delete()
+            # cria nova linha na tabela para mat
+            requisicoesMat = NumeroRequisicoes(
+                turno='MAT', valor=requisicoesMatutino)
+            requisicoesMat.save()  # salva no bd
+
+            NumeroRequisicoes.objects.filter(turno='VES').delete()
+            requisicoesVes = NumeroRequisicoes(
+                turno='VES', valor=requisicoesVespertino)
+            requisicoesVes.save()
+
             return Response({"message": "Vagas Criadas com Sucesso!", "turmas": serializerTurmas.data}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({{'Erro Interno: ', str(e)}}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class TurmaListAPIView(generics.ListAPIView):
     permission_classes = [IsAdmin]
     queryset = Turma.objects.all()
     serializer_class = RelatorioSerializer
+
+
+@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def reserva_turno(request):
+    """
+    Processo de reserva de alunos para matricula.
+    Algoritmo:
+    2.1 - É checado todos elementos da lista de alunos reservados e todos que tiverem com um tempo maior que 30s sao deletados.
+    2.2 - É checado quantas pessoas estão atualmente na fila de pessoas autorizadas
+    (tabela no banco também), se não forem menores que o número máximo de requisicoes essa pessoa entra na
+    fila com um timestamp e o id do user, após 30 segundos esse usuario é deletado da fila,
+    caso contrário é retornado uma mensagem de erro dizendo que muitos alunos estão tentando se matricular atualmente."""
+    turno = request.data.get('turno')
+    with transaction.atomic(): # transacao atomica no banco de dados
+        # 0. checa se aluno ja esta na fila e o deleta caso esteja
+        AlunosReservados.objects.filter(aluno=request.user.id).delete()
+        # 1. Busca o número máximo de requisições permitidas para o turno matutino
+        MAX_REQUISICOES = 0
+        try:
+            requisicoes = NumeroRequisicoes.objects.get(turno=turno)
+            MAX_REQUISICOES = requisicoes.valor  # Valor definido no banco
+        except NumeroRequisicoes.DoesNotExist:
+            return Response({"error": "Número máximo de requisições para o turno matutino não definido."}, status=500)
+
+            # 2.1 - Checa e remove todos os alunos reservados há mais de 30 segundos
+        limite_tempo = timezone.now() - timedelta(seconds=31)
+        AlunosReservados.objects.filter(
+                turno=turno, tempo_inicial__lt=limite_tempo).delete()
+
+            # 3. Verifica quantas pessoas estão atualmente na fila de reservados
+        total_reservados = AlunosReservados.objects.filter(turno=turno).count()
+        if total_reservados < MAX_REQUISICOES:
+                # 4. Adiciona o usuário à fila de reservados
+            aluno = Aluno.objects.get(id=request.user.id)
+            novo_aluno_reservado = AlunosReservados(
+                    aluno=aluno,  # Usuário autenticado
+                    turno=turno,
+                    tempo_inicial=timezone.now()
+                )
+            novo_aluno_reservado.save()
+                # Retorna mensagem de sucesso
+            return Response({"message": "Você foi adicionado à fila com sucesso!"})
+        else:
+                # Retorna erro se o limite for atingido
+                return Response({"error": "Muitos alunos estão tentando se matricular. Tente novamente mais tarde."}, status=429)
