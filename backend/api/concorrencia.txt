@@ -1,0 +1,39 @@
+Processo da concorrência:
+
+2 novas tabelas: 
+    1 - NumeroRequisicoes (salvar o numero de requiscoes permitidas para cada turno) (FEITO)
+    2- AlunosReservados (alunos que conseguiram reservar sua vaga,
+     possui id, turno e timestamp da requisicao para limitar 30s) (FEITO)
+
+
+
+Algoritmo: 
+
+1 - Criacão do valor de número de requisicoes por turno
+    1.1 -  Ao gerar as turmas, descobrir valor máximo inical de requisições permitidas para cada turno (
+    o valor máximo de requisições concorrentes deve ser igual a turma com menor numero de vagas e 
+    deve ser alterado dinamicamente). (FEITO)
+    1.2 - Esse valor deve ser salvo no BD, para que seja possivel ser recuperado e alterado por todas threads da requisição 
+    de forma atômica, ou seja, são executadas uma por vez independente do número de threads  (atomic transaction). (FEITO)
+
+2 - API de reserva de vagas (atomic transaction):
+
+    2.1 - É checado todos elementos da lista de alunos reservados e todos que tiverem com um tempo maior que 30s sao deletados.(FEITO)
+    2.2 - É checado quantas pessoas estão atualmente na fila de pessoas autorizadas 
+    (tabela no banco também):
+    se não forem menores que o número máximo de requisicoes essa pessoa entra na fila com um timestamp e o id do user,
+
+    caso contrário é retornado uma mensagem de erro dizendo que muitos alunos estão tentando se matricular atualmente. (FEITO)
+
+
+3 - API para matrícula
+    3.1 - Quando um aluno autorizado a ser matriculado confirma sua matricula, é checado se esse aluno está na fila 
+    e verificado com o timestamp se não se passaram 30 segundos, se passar mais de 30 segundos ou o aluno não estiver 
+    na fila a matricula nao é realizada (e o aluno é deletado da fila), caso contrário a matrícula é realizada
+    atomicamente e o aluno também é deletado da fila. (FEITO)
+
+    3.2 - Se o número novo de vagas restantes for menor do que o número de requisicoes permitidas, esse valor é alterado
+    para esse novo valor, se o valor novo for 0, o número é alterado para a outra turma com menor número de vagas. (FEITO)
+
+
+

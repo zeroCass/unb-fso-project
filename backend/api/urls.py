@@ -39,9 +39,10 @@ urlpatterns = [
      path('relatorio/', views.TurmaListAPIView.as_view(), name = 'relatorio'),
     
 
-     path('trilhas/', views.get_trilhas, name='get-trilhas')
+     path('trilhas/', views.get_trilhas, name='get-trilhas'),
 
 
+     path('reserva-turno/', views.reserva_turno, name='reserva-turno')
 
 
 

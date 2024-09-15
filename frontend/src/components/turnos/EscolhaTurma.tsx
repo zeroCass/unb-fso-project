@@ -1,6 +1,11 @@
 "use client";
+import { ReservaTurno } from "@/actions/reservaTurno";
 import { useUser } from "@/context/userContext";
 import { Turma } from "@/types";
+import { useRouter } from 'next/navigation';  // Importa o hook useRouter
+
+
+
 import {
 	Box,
 	Button,
@@ -21,6 +26,7 @@ const TURNOS = {
 	VES: "Vespertino",
 };
 
+
 const calculateTotalVagas = (turmas: Turma[]) =>
 	turmas.reduce((total, turma) => total + turma.capacidadeAtual, 0);
 
@@ -38,7 +44,18 @@ const TurnoCard = ({
 	turnoKey: string;
 }) => {
 	const isAluno = user?.role === "ALUNO";
+	const router = useRouter();  // Obtém a função de roteamento
+	const handleClick = async () => {
 
+		const result = await ReservaTurno(turnoKey);
+		console.log(result['data'])
+		let response = result['data']
+		if (response['error']) {
+			alert(response['error'])
+		} else {
+			router.push(`/matricula/turmas?turno=${turnoKey}`);  // Redireciona para a URL desejada
+		}
+	};
 	return (
 		<Card
 			elevation={5}
@@ -116,7 +133,7 @@ const TurnoCard = ({
 						borderRadius: "20px",
 						backgroundColor: "var(--primary-dark)",
 					}}
-					href={`/matricula/turmas?turno=${turnoKey}`}
+					onClick={handleClick} // Agora chama a função do servidor
 				>
 					Escolher
 				</Button>
