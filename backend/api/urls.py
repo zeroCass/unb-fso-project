@@ -33,8 +33,10 @@ urlpatterns = [
 
     path('matricula/', views.matricula, name='matricula'),
 
-     # get para geracao de turmas automatica:
-     path('gerar-turmas/', views.create_turmas, name='matricula'),
+     # get para geracao de turmas automatica e inciar periodo de matricula:
+     path('iniciar-periodo-matricula/', views.iniciar_periodo_matricula, name='matricula'),
+     path('consultar-periodo-matricula/', views.consultar_periodo_matricula, name='periodo-matricula'),
+     path('finalizar-periodo-matricula/', views.finalizar_periodo_matricula, name='finalizar_periodo_matricula'),
 
      path('relatorio/', views.TurmaListAPIView.as_view(), name = 'relatorio'),
     
@@ -42,11 +44,9 @@ urlpatterns = [
      path('trilhas/', views.get_trilhas, name='get-trilhas'),
 
 
-     path('reserva-turno/', views.reserva_turno, name='reserva-turno'),
-     
      path('desfazer-reserva/', views.desfazer_reserva, name='desfazer-reserva'),
+     path('reserva-turno/', views.reserva_turno, name='reserva-turno'),
 
-
-
+     
 
 ]

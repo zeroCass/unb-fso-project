@@ -1,5 +1,7 @@
 "use client";
 
+import inciarPeriodoMatricula from "@/actions/inicarPeriodoMatricula";
+import { usePeriodoMatricula } from "@/context/PeriodoMatriculaContext";
 import { useUser } from "@/context/userContext";
 import { Aluno, Turma, User } from "@/types";
 import { Box, Container, Typography } from "@mui/material";
@@ -11,15 +13,33 @@ type UserRole = {
 	role: "ADMIN" | "ALUNO";
 };
 
+function formatDate(date: Date) {
+	return String(date);
+}
+
 function CustomButton({ role }: UserRole) {
 	const router = useRouter();
+
+	const getPeriodoMatricula = async () => {
+		await inciarPeriodoMatricula();
+		window.location.href = "/";
+	};
+
+	const getTurnos = () => {
+		router.push("/matricula/turnos");
+	};
+
 	return (
 		<>
 			{role === "ALUNO" ? (
-				<button onClick={() => router.push("/matricula/turnos")} className={styles.button_styled}>
+				<button onClick={() => getTurnos()} className={styles.button_styled}>
 					Clique Aqui
 				</button>
-			) : null}
+			) : (
+				<button onClick={getPeriodoMatricula} className={styles.button_styled}>
+					Clique Aqui
+				</button>
+			)}
 		</>
 	);
 }
@@ -34,6 +54,9 @@ const HomeImage = () => {
 
 const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 	const isMatriculado = Boolean(turma);
+	const { periodo } = usePeriodoMatricula();
+
+	console.log("perioso de matricula: ", periodo);
 
 	return (
 		<Box>
@@ -45,7 +68,7 @@ const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 				{!isMatriculado ? "Você não está matriculado ainda." : "Você está matriculado na trilha"}
 			</Typography>
 
-			{!isMatriculado ? (
+			{!isMatriculado && periodo?.status === "EM_ANDAMENTO" && (
 				<Box
 					sx={{
 						display: "flex",
@@ -59,7 +82,23 @@ const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 						para se matricular
 					</Typography>
 				</Box>
-			) : (
+			)}
+
+			{!isMatriculado && (!periodo || periodo.status === "FINALIZADO") && (
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						marginTop: "15%",
+					}}
+				>
+					<Typography className={styles.base_text} sx={{ marginTop: "-1.5rem" }}>
+						Não estamos no período de matrícula
+					</Typography>
+				</Box>
+			)}
+			{isMatriculado && (
 				<Box
 					sx={{
 						display: "flex",
@@ -81,6 +120,8 @@ const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 const AdminContent = ({ user, alunos }: { user: User | null; alunos: Aluno[] | null }) => {
 	const totalAlunos = alunos?.length || 0;
 	const totalAlunosMatriculados = alunos?.reduce((count, aluno) => (aluno.turma ? count + 1 : count), 0);
+	const { periodo } = usePeriodoMatricula();
+	const dateFormatted = periodo ? formatDate(periodo.fim) : "";
 
 	return (
 		<Box>
@@ -88,9 +129,22 @@ const AdminContent = ({ user, alunos }: { user: User | null; alunos: Aluno[] | n
 				Olá ADM <br /> {user?.nome}.
 			</Typography>
 
-			<Typography className={styles.styled_text} sx={{ marginLeft: "2rem", marginTop: "2rem" }}>
-				Verifique o status do período de matrícula.
-			</Typography>
+			{periodo?.status === "EM_ANDAMENTO" ? (
+				<Typography className={styles.styled_text} sx={{ marginLeft: "2rem", marginTop: "2rem" }}>
+					Periodo de matricula em andamento. Término:
+					{dateFormatted}
+				</Typography>
+			) : (
+				<>
+					<Typography className={styles.styled_text} sx={{ marginLeft: "2rem", marginTop: "2rem" }}>
+						Fora do período de matrícula.
+					</Typography>
+					<CustomButton role={"ADMIN"} />
+					<Typography className={styles.base_text} sx={{ marginTop: "-1.5rem" }}>
+						para inciar o período de matrícula
+					</Typography>
+				</>
+			)}
 
 			<Box
 				sx={{

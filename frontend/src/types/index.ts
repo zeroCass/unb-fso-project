@@ -66,3 +66,21 @@ export type Aluno = {
 	role: "ALUNO";
 	turma: number | null;
 };
+
+export type APIGenericResponse = {
+	sucess?: boolean;
+	error?: boolean;
+	message: string;
+	data?: any;
+};
+
+export type PeriodoMatricula = {
+	inicio: Date;
+	fim: Date;
+	status: "EM_ANDAMENTO" | "FINALIZADO";
+};
+
+export type IPeriodoMatriculaContext = {
+	periodo: PeriodoMatricula | null;
+	setPeriodo: React.Dispatch<React.SetStateAction<PeriodoMatricula | null>>;
+};

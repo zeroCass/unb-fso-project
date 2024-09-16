@@ -1,4 +1,6 @@
+import { fetchPeriodoMatricula } from "@/actions/fetchPeriodoMatricula";
 import { fetchUser } from "@/actions/fetchUser";
+import { PeriodoMatriculaContextProvider } from "@/context/PeriodoMatriculaContext";
 import { UserContextProvider } from "@/context/userContext";
 import type { Metadata } from "next";
 import { CookiesProvider } from "next-client-cookies/server";
@@ -15,12 +17,15 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const user = await fetchUser();
+	const periodo = await fetchPeriodoMatricula();
 
 	return (
 		<CookiesProvider>
 			<html lang="pt-BR">
 				<body>
-					<UserContextProvider user={user}>{children}</UserContextProvider>
+					<UserContextProvider user={user}>
+						<PeriodoMatriculaContextProvider periodo={periodo}>{children}</PeriodoMatriculaContextProvider>
+					</UserContextProvider>
 				</body>
 			</html>
 		</CookiesProvider>

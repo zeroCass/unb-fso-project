@@ -1,23 +1,24 @@
-from math import floor
-from django.utils import timezone
+import re
+import time
 from datetime import timedelta
+from math import floor
+
 from django.contrib.auth import authenticate, logout
+from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import generics, permissions, serializers, status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import re
-import time
-from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario, NumeroRequisicoes, AlunosReservados
-from django.db import transaction
 
+from .models import (Aluno, AlunosReservados, NomeTurma, NumeroRequisicoes,
+                     PeriodoMatricula, Role, Trilha, Turma, Turno, Usuario)
 from .permissions import IsAdmin, IsAdminOrSpecificUser
 from .serializers import (AdminSerializer, AlunoSerializer,
                           RelatorioSerializer, TurmaSerializer)
-
 
 INFINITY = 2**100  # large number
 
@@ -368,19 +369,65 @@ def matricula(request):
         return user.aluno.matricula(turma_id)
 
 
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+def consultar_periodo_matricula(request):
+
+    try:
+        periodo = PeriodoMatricula.objects.last()  # Pega o último período definido
+        if periodo:
+            data = {
+                'inicio': periodo.inicio.isoformat(),
+                'fim': periodo.fim.isoformat(),
+                'status': periodo.status
+            }
+            return Response({ 'sucess': True, 'message': 'Dados obtidos com sucesso!', 'data': data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': True, 'message': 'Período de matrícula não definido.'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': True, 'message': f'Erro Interno: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def finalizar_periodo_matricula(request):
+    user = request.user
+    if user.role != 'ADMIN':
+        return Response({'error': True, 'message': 'Você não está autorizado a finalizar o período de matrícula.'}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        # Finaliza o período de matrícula
+        PeriodoMatricula.finalizar_periodo()
+
+        return Response(
+            {"success": True, "message": "Período de matrícula finalizado com sucesso."},
+            status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        return Response(
+            {"error": True, "message": f"Erro ao finalizar o período de matrícula: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+
+
 # precisa estar autenticado para acessar essa rota
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
-def create_turmas(request):  # view para geracao de turmas quando o periodo de matricular acabar
+def iniciar_periodo_matricula(request):  # view para geracao de turmas quando o periodo de matricular acabar
     user = request.user
     # Verifica se o usuário tem o papel de ADMIN
     if user.role != 'ADMIN':
-        return Response({'error': 'Você não está autorizado a gerar as turmas.'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'error': True, 'message': 'Você não está autorizado a gerar as turmas.'}, status=status.HTTP_403_FORBIDDEN)
     else:
         # Para criar as turmas precimaso de 2 passos antes:
+        # 0 - inciar o periodo de matriculas
         # 1 - setar todas chaves estrangeiras dos alunos para null.
         # 2 - deletar todas turmas existentes caso exista.
         try:
+            PeriodoMatricula.iniciar_periodo(horas=24)
+
             Aluno.objects.update(turma=None)  # seta turma para null
             alunos = Aluno.objects.all()
             for aluno in alunos:
@@ -475,9 +522,9 @@ def create_turmas(request):  # view para geracao de turmas quando o periodo de m
                 turno='VES', valor=requisicoesVespertino)
             requisicoesVes.save()
 
-            return Response({"message": "Vagas Criadas com Sucesso!", "turmas": serializerTurmas.data}, status=status.HTTP_200_OK)
+            return Response({"sucesso": True, "message": "Vagas Criadas com Sucesso!", "turmas": serializerTurmas.data}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({{'Erro Interno: ', str(e)}}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({{'error': True,'message': f'Erro Interno: {str(e)}'}}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class TurmaListAPIView(generics.ListAPIView):
@@ -489,6 +536,10 @@ class TurmaListAPIView(generics.ListAPIView):
 @permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def reserva_turno(request):
+    user = request.user
+    if (user.role != 'ALUNO'):
+        return Response({"error": True, "message": "Você não está autorizado a realizar esta operação"}, status=400)
+
     """
     Processo de reserva de alunos para matricula.
     Algoritmo:
@@ -499,22 +550,44 @@ def reserva_turno(request):
     caso contrário é retornado uma mensagem de erro dizendo que muitos alunos estão tentando se matricular atualmente."""
     turno = request.data.get('turno')
     with transaction.atomic(): # transacao atomica no banco de dados
-        # 0. checa se aluno ja esta na fila e o deleta caso esteja
-        AlunosReservados.objects.filter(aluno=request.user.id).delete()
+
+        # (NEW) 0. checa se o aluno ja esta na fila e pega o tempo restante
+        try:
+            aluno_reservado = AlunosReservados.objects.filter(aluno=user.id).first()
+            print(f"aluno reservado: {aluno_reservado}")
+            if (aluno_reservado):
+                tempo_inicial = aluno_reservado.tempo_inicial
+                tempo_atual = timezone.now()
+                limite_tempo = tempo_inicial + timedelta(seconds=30)
+
+                # 0.1. checa se ainda o tempo está no limite aceitavel, se sim retorna o tempo restante, se não exclui o usuario da reserva
+                if tempo_atual < limite_tempo:
+                    # If the reservation is less than 30 seconds old, return success with the reservation time
+                    return Response({
+                        "success": True,
+                        "message": "Você já está na fila de reserva.",
+                        "tempo_inicial": tempo_inicial.isoformat()  # Returning the timestamp in ISO format
+                    }, status=200)
+                else:
+                    AlunosReservados.objects.filter(aluno=request.user.id).delete()
+                    return Response({"error": True, "message": "O seu tempo de matricula expirou, tente novamente."}, status=400)
+        except Exception as e:
+            return Response({"error": True, "message": f"Erro durante a operação: {e}"}, status=500)
+
         # 1. Busca o número máximo de requisições permitidas para o turno matutino
         MAX_REQUISICOES = 0
         try:
             requisicoes = NumeroRequisicoes.objects.get(turno=turno)
             MAX_REQUISICOES = requisicoes.valor  # Valor definido no banco
         except NumeroRequisicoes.DoesNotExist:
-            return Response({"error": "Número máximo de requisições para o turno matutino não definido."}, status=500)
+            return Response({"error": True, "message": "Número máximo de requisições para o turno matutino não definido."}, status=500)
 
             # 2.1 - Checa e remove todos os alunos reservados há mais de 30 segundos
         limite_tempo = timezone.now() - timedelta(seconds=31)
         AlunosReservados.objects.filter(
                 turno=turno, tempo_inicial__lt=limite_tempo).delete()
 
-            # 3. Verifica quantas pessoas estão atualmente na fila de reservados
+        # 3. Verifica quantas pessoas estão atualmente na fila de reservados
         total_reservados = AlunosReservados.objects.filter(turno=turno).count()
         if total_reservados < MAX_REQUISICOES:
                 # 4. Adiciona o usuário à fila de reservados
@@ -526,10 +599,10 @@ def reserva_turno(request):
                 )
             novo_aluno_reservado.save()
                 # Retorna mensagem de sucesso
-            return Response({"message": "Você foi adicionado à fila com sucesso!"})
+            return Response({"sucesss": True, "message": "Você foi adicionado à fila com sucesso!"}, status=200)
         else:
                 # Retorna erro se o limite for atingido
-                return Response({"error": "Muitos alunos estão tentando se matricular. Tente novamente mais tarde."}, status=429)
+                return Response({"error": True, "message": "Muitos alunos estão tentando se matricular. Tente novamente mais tarde."}, status=429)
 
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])

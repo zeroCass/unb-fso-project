@@ -1,28 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { Box, Container, Button, Grid } from "@mui/material";
-import { Turma } from "@/types";
-import TurmaItem from "./TurmaItem";
-import TurmaHeader from "./TurmaHeader";
-import { useRouter } from "next/navigation";
 import matricular from "@/actions/matricular";
+import { Turma } from "@/types";
+import { Box, Button, Container } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import TurmaHeader from "./TurmaHeader";
+import TurmaItem from "./TurmaItem";
 import { desfazerReserva } from "@/actions/reservaTurno";
 
 
 type turnoType = "MAT" | "VES" | "ALL";
 
-function FooterButtons({
-	selectedTurmaId,
-}: {
-	selectedTurmaId: number | null;
-}) {
+function FooterButtons({ selectedTurmaId }: { selectedTurmaId: number | null }) {
 	const router = useRouter();
 
 	const handleSave = async () => {
 		if (selectedTurmaId !== null) {
-			alert(`Salvando turma com ID: ${selectedTurmaId}`);
-			await matricular(selectedTurmaId);
+			const response = await matricular(selectedTurmaId);
+			alert(`${response.error ? "Erro:" : "Sucesso:"}: ${response.message}`);
+			router.push("/");
 		}
 	};
 	const handleReturnMatricula = async () => {
@@ -42,29 +39,17 @@ function FooterButtons({
 			>
 				Voltar
 			</Button>
-			<Button
-				variant="contained"
-				color="primary"
-				onClick={handleSave}
-				disabled={selectedTurmaId === null}
-			>
+			<Button variant="contained" color="primary" onClick={handleSave} disabled={selectedTurmaId === null}>
 				Salvar
 			</Button>
 		</Box>
 	);
 }
 
-export default function Matricula({
-	turno,
-	turmas,
-}: {
-	turno: turnoType;
-	turmas: Turma[];
-}) {
+export default function Matricula({ turno, turmas }: { turno: turnoType; turmas: Turma[] }) {
 	const [selectedTurmaId, setSelectedTurmaId] = useState<number | null>(null);
 
-	const turmasByTurno =
-		turno === "ALL" ? turmas : turmas.filter((turma) => turma.turno === turno);
+	const turmasByTurno = turno === "ALL" ? turmas : turmas.filter((turma) => turma.turno === turno);
 
 	const handleSelect = (id: number) => {
 		setSelectedTurmaId(id);
