@@ -111,7 +111,8 @@ class Aluno(Usuario):
 
                     # Remove o aluno da fila após matrícula bem-sucedida
                     aluno_reservado.delete()
-
+                else:
+                    return Response({"error": True, "message": "Turma está cheia."}, status=400)
                 # Ajusta o valor de NumeroRequisicoes com base nas vagas restantes
                 requisicoes_turno = NumeroRequisicoes.objects.select_for_update().get(turno=turma.turno)
                 
@@ -126,10 +127,9 @@ class Aluno(Usuario):
                     if menor_turma:
                         requisicoes_turno.valor = menor_turma.capacidadeAtual
                         requisicoes_turno.save()
-                    return Response({"sucess": True, "message": "Aluno matriculado na turma " + str(turma.nome) +
+                return Response({"sucess": True, "message": "Aluno matriculado na turma " + str(turma.nome) +
                                                 " do Ano: " + str(turma.ano)}, status=200)
-                else:
-                    return Response({"error": True, "message": "Turma está cheia."}, status=400)
+                
 
             except Turma.DoesNotExist:
                 return Response({"error": True, "message":"Turma não encontrada."}, status=404)
