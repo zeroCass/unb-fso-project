@@ -1,65 +1,93 @@
-# Projeto Final de FSO Unb (Fundamentos de Sistemas Operacionais)
 
-    Disciplina: Fundamentos de Sistema Operacional
-    Alunos: Felipe Rocha - 170050084
-            Maylla Krislainy - 190043873
-            Mateus Valerio - 190035161
+# Projeto de FSO
 
-    Obs.: Mais documentação disponível na pasta docs/.
+*Disciplina: Fundamentos de Sistema Operacional (UnB)*
+
+O Projeto tem como objetivo automatizar o processo de escolha de trilhas e matrículas para os alunos do ensino médio de um centro de ensino, considerando as restrições de vagas e turnos.
+
+## Autores
+
+- [Felipe Rocha - 170050084](https://github.com/felipenrocha)
+- [ Maylla Krislainy - 190043873](https://github.com/maydMoon)
+- [Mateus Valerio - 190035161](https://github.com/zeroCass)
+       
+      
+## Documentação
+
+Dentro da pasta docs do repositório, você encontrará os slides correspondentes a cada sprint de entrega, o diagrama ER, o diagrama de casos de uso e o diagrama de classes. Além de mais informações sobre a instalação e requisitos do projeto.
 
 ## Instalação
+A instalação do projeto se dvide em Back e Frontend.
 
 ### Backend
+```bash
+  cd backend
+```
+Faça o download pacotes necessários
 
 ```bash
-cd backend
-
-# Download pacotes necessários
 pip install -r requirements.txt
+```
+Faça as migrations
 
-# Faça as migrations
+```bash
 py manage.py makemigrations
+```
+```bash
 py manage.py migrate
+```
 
-# Popule o banco de dados com dados iniciais backend/api/fixtures diretório
+Popule o banco de dados com dados iniciais (*backend/api/fixtures diretório*)
+
+```bash
 py manage.py loaddata turmas.json
+```
+```bash
 py manage.py loaddata usuarios.json
+```
+*(Opcional)* Crie um superuser
 
-
-# (Opcional) Crie um superuser
+```bash
 py manage.py createsuperuser
 ..<input a username, email, and password>
-
 ```
 
 ### Frontend
+```bash
+  cd frontend
+```
+Download pacotes necessários
 
 ```bash
-cd frontend
-
-# Download pacotes necessários
-npm install
+    npm instal
 ```
+- Crie e configure o arquivo .env de acordo com exemplo: .env.sample 
 
-1 - Crie e configure o arquivo .env de acordo com exemplo .env.sample
-2 - Crie o arquivo .env.local na raiz do diretório frontend (onde se encontra outros arquivos de configuração como package.json, next.config, etc)
-3 - Defina o endereço da API do DJANGO:
-`DJANGO_API='http://localhost:8000'`
+- Crie o arquivo .env.local na raiz do diretório frontend _(onde se encontra outros arquivos de configuração como package.json, next.config, etc)_
 
-## Como rodar
+- Defina o endereço da API do DJANGO: 
+
+```bash
+    DJANGO_API='http://localhost:8000'
+```
+## Rodando localmente
+Apos ter clonado o projeto e instalado as dependências, inicie o servidor respectivamente: 
 
 ### Backend
 
 ```bash
-cd backend
-
-python .\manage.py runserver
+  cd backend
+```
+```bash
+  python .\manage.py runserver
 ```
 
 ### Frontend
 
 ```bash
-cd frontend
-
-npm run dev
+    cd frontend
 ```
+```bash
+    npm run dev
+```
+
