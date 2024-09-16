@@ -24,8 +24,7 @@ const TURNOS = {
 	VES: "Vespertino",
 };
 
-const calculateTotalVagas = (turmas: Turma[]) =>
-	turmas.reduce((total, turma) => total + turma.capacidadeAtual, 0);
+const calculateTotalVagas = (turmas: Turma[]) => turmas.reduce((total, turma) => total + turma.capacidadeAtual, 0);
 
 const TurnoCard = ({
 	turno,
@@ -43,11 +42,10 @@ const TurnoCard = ({
 	const isAluno = user?.role === "ALUNO";
 	const router = useRouter(); // Obtém a função de roteamento
 	const handleClick = async () => {
-		const result = await ReservaTurno(turnoKey);
-		console.log(result["data"]);
-		let response = result["data"];
-		if (response["error"]) {
-			alert(response["error"]);
+		const response = await ReservaTurno(turnoKey);
+		console.log(response.message);
+		if (response.error) {
+			alert(`Erro: ${response.message}`);
 		} else {
 			router.push(`/matricula/turmas?turno=${turnoKey}`); // Redireciona para a URL desejada
 		}
@@ -144,13 +142,7 @@ export default function EscolhaTurno({ turmas }: { turmas: Turma[] }) {
 	}, [turmas]);
 
 	return (
-		<Grid
-			container
-			justifyContent="center"
-			alignItems="center"
-			spacing={4}
-			style={{ height: "100vh" }}
-		>
+		<Grid container justifyContent="center" alignItems="center" spacing={4} style={{ height: "100vh" }}>
 			<Grid item>
 				<TurnoCard
 					turno={TURNOS.MAT}

@@ -1,8 +1,8 @@
 "use server";
 import { getToken } from "@/lib/getToken";
-import { redirect } from "next/navigation";
+import { APIGenericResponse } from "@/types";
 
-export default async function matricular(turmaID: number) {
+export default async function matricular(turmaID: number): Promise<APIGenericResponse> {
 	const token = await getToken();
 
 	const response = await fetch(`${process.env.DJANGO_API}/api/matricula/`, {
@@ -13,10 +13,14 @@ export default async function matricular(turmaID: number) {
 		},
 		body: JSON.stringify({ turma: turmaID }),
 	});
-	
-	if (!response.ok) {
-		throw new Error("Falha ao realizar matricula");
-	}
-	console.warn("Matricula realizada com sucesso!");
-	redirect("/");
+	const data = await response.json();
+	console.warn("Matricula: ", data);
+
+	// redirect("/");
+
+	return {
+		sucess: data?.sucess ? true : false,
+		error: data?.error ? true : false,
+		message: data.message,
+	};
 }

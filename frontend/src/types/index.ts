@@ -66,3 +66,9 @@ export type Aluno = {
 	role: "ALUNO";
 	turma: number | null;
 };
+
+export type APIGenericResponse = {
+	sucess?: boolean;
+	error?: boolean;
+	message: string;
+};
