@@ -16,6 +16,13 @@ O Projeto tem como objetivo automatizar o processo de escolha de trilhas e matr�
 
 Dentro da pasta docs do repositório, você encontrará os slides correspondentes a cada sprint de entrega, o diagrama ER, o diagrama de casos de uso e o diagrama de classes. Além de mais informações sobre a instalação e requisitos do projeto.
 
+## Funcionalidades Principais:
+
+- **Cadastro de Alunos:** Os alunos se cadastram com seus CPFs para acessar o sistema.
+- **Escolha de Trilha:** O sistema apresenta as trilhas disponíveis com base nas vagas e turnos, permitindo que o aluno faça sua escolha.
+- **Gerenciamento de Vagas:** O sistema controla as vagas disponíveis em cada turma e trilha, evitando overbooking.
+- **Relatórios:** O administrador pode consultar um relatório completo das matrículas.
+  
 ## Instalação
 A instalação do projeto se dvide em Back e Frontend.
 
