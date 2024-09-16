@@ -16,6 +16,10 @@ O Projeto tem como objetivo automatizar o processo de escolha de trilhas e matr�
 
 Dentro da pasta docs do repositório, você encontrará os slides correspondentes a cada sprint de entrega, o diagrama ER, o diagrama de casos de uso e o diagrama de classes. Além de mais informações sobre a instalação e requisitos do projeto.
 
+### Figma
+No link abaixo encontra-se a prototipação no Figma das interfaces do projeto:
+ - [Figma](https://www.figma.com/design/2OjQVrDtwqiOjIl23i0s80/FSO-Project?node-id=0-1&t=XmIpIHWNanxcVzIW-1)
+
 ## Funcionalidades Principais:
 
 - **Cadastro de Alunos:** Os alunos se cadastram com seus CPFs para acessar o sistema.
