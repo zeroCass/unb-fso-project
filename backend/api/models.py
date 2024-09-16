@@ -175,3 +175,32 @@ class AlunosReservados(models.Model):
 
     def __str__(self):
         return f"{self.aluno} ({self.tempo_inicial}) - {self.turno}"
+    
+
+class PeriodoMatricula(models.Model):
+    STATUS_CHOICES = [
+        ('EM_ANDAMENTO', 'Em andamento'),
+        ('FINALIZADO', 'Finalizado'),
+    ]
+
+    inicio = models.DateTimeField(default=timezone.now)
+    fim = models.DateTimeField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='EM_ANDAMENTO')
+
+    @classmethod
+    def iniciar_periodo(cls, horas=24):
+        """Inicia ou atualiza o período de matrícula."""
+        inicio = timezone.now()
+        fim = inicio + timezone.timedelta(hours=horas)
+        cls.objects.update_or_create(
+            defaults={'inicio': inicio, 'fim': fim, 'status': 'EM_ANDAMENTO'}
+        )
+
+    @classmethod
+    def finalizar_periodo(cls):
+        """Finaliza o período de matrícula."""
+        agora = timezone.now()
+        cls.objects.update(fim=agora, status='FINALIZADO')
+
+    def __str__(self):
+        return f"Início: {self.inicio}, Fim: {self.fim}"
