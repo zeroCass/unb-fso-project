@@ -7,6 +7,8 @@ import TurmaItem from "./TurmaItem";
 import TurmaHeader from "./TurmaHeader";
 import { useRouter } from "next/navigation";
 import matricular from "@/actions/matricular";
+import { desfazerReserva } from "@/actions/reservaTurno";
+
 
 type turnoType = "MAT" | "VES" | "ALL";
 
@@ -23,13 +25,20 @@ function FooterButtons({
 			await matricular(selectedTurmaId);
 		}
 	};
-
+	const handleReturnMatricula = async () => {
+		
+			const result = await desfazerReserva();
+			console.log(result);
+			router.push("/matricula/turnos");
+		
+	};
 	return (
 		<Box display="flex" justifyContent="center" gap={2} mt={10}>
 			<Button
 				variant="outlined"
 				color="primary"
-				onClick={() => router.push("/matricula/turnos")}
+				onClick={handleReturnMatricula}
+
 			>
 				Voltar
 			</Button>

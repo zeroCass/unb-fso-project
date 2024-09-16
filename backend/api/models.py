@@ -71,7 +71,7 @@ class Aluno(Usuario):
                 atomicamente e o aluno também é deletado da fila. 
                 2 - Se o número novo de vagas restantes for menor do que o número de requisicoes permitidas, esse valor é alterado
                 para esse novo valor, se o valor novo for 0, o número é alterado para a outra turma com menor número de vagas."""
-    # Checa se aluno já está matriculado
+        # Checa se aluno já está matriculado
         if self.turma:
             turma = Turma.objects.get(id=turma_id)
             return Response(data={"error": "Aluno já está matriculado na turma: " + str(turma.nome) +

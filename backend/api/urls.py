@@ -42,7 +42,9 @@ urlpatterns = [
      path('trilhas/', views.get_trilhas, name='get-trilhas'),
 
 
-     path('reserva-turno/', views.reserva_turno, name='reserva-turno')
+     path('reserva-turno/', views.reserva_turno, name='reserva-turno'),
+     
+     path('desfazer-reserva/', views.desfazer_reserva, name='desfazer-reserva'),
 
 
 

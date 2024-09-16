@@ -530,3 +530,12 @@ def reserva_turno(request):
         else:
                 # Retorna erro se o limite for atingido
                 return Response({"error": "Muitos alunos estão tentando se matricular. Tente novamente mais tarde."}, status=429)
+
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+def desfazer_reserva(request):
+    with transaction.atomic(): # transacao atomica no banco de dados
+        # Deleta o usuário da fila se existir.
+        AlunosReservados.objects.filter(aluno=request.user.id).delete()
+    return Response({"message": "Aluno retirado da fila."})
+
