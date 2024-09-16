@@ -1,23 +1,24 @@
-from math import floor
-from django.utils import timezone
+import re
+import time
 from datetime import timedelta
+from math import floor
+
 from django.contrib.auth import authenticate, logout
+from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import generics, permissions, serializers, status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import re
-import time
-from .models import Aluno, NomeTurma, Role, Trilha, Turma, Turno, Usuario, NumeroRequisicoes, AlunosReservados
-from django.db import transaction
 
+from .models import (Aluno, AlunosReservados, NomeTurma, NumeroRequisicoes,
+                     Role, Trilha, Turma, Turno, Usuario)
 from .permissions import IsAdmin, IsAdminOrSpecificUser
 from .serializers import (AdminSerializer, AlunoSerializer,
                           RelatorioSerializer, TurmaSerializer)
-
 
 INFINITY = 2**100  # large number
 
@@ -489,6 +490,10 @@ class TurmaListAPIView(generics.ListAPIView):
 @permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def reserva_turno(request):
+    user = request.user
+    if (user.role != 'ALUNO'):
+        return Response({"error": True, "message": "Você não está autorizado a realizar esta operação"}, status=400)
+
     """
     Processo de reserva de alunos para matricula.
     Algoritmo:
@@ -499,22 +504,44 @@ def reserva_turno(request):
     caso contrário é retornado uma mensagem de erro dizendo que muitos alunos estão tentando se matricular atualmente."""
     turno = request.data.get('turno')
     with transaction.atomic(): # transacao atomica no banco de dados
-        # 0. checa se aluno ja esta na fila e o deleta caso esteja
-        AlunosReservados.objects.filter(aluno=request.user.id).delete()
+
+        # (NEW) 0. checa se o aluno ja esta na fila e pega o tempo restante
+        try:
+            aluno_reservado = AlunosReservados.objects.filter(aluno=user.id).first()
+            print(f"aluno reservado: {aluno_reservado}")
+            if (aluno_reservado):
+                tempo_inicial = aluno_reservado.tempo_inicial
+                tempo_atual = timezone.now()
+                limite_tempo = tempo_inicial + timedelta(seconds=30)
+
+                # 0.1. checa se ainda o tempo está no limite aceitavel, se sim retorna o tempo restante, se não exclui o usuario da reserva
+                if tempo_atual < limite_tempo:
+                    # If the reservation is less than 30 seconds old, return success with the reservation time
+                    return Response({
+                        "success": True,
+                        "message": "Você já está na fila de reserva.",
+                        "tempo_inicial": tempo_inicial.isoformat()  # Returning the timestamp in ISO format
+                    }, status=200)
+                else:
+                    AlunosReservados.objects.filter(aluno=request.user.id).delete()
+                    return Response({"error": True, "message": "O seu tempo de matricula expirou, tente novamente."}, status=400)
+        except Exception as e:
+            return Response({"error": True, "message": f"Erro durante a operação: {e}"}, status=500)
+
         # 1. Busca o número máximo de requisições permitidas para o turno matutino
         MAX_REQUISICOES = 0
         try:
             requisicoes = NumeroRequisicoes.objects.get(turno=turno)
             MAX_REQUISICOES = requisicoes.valor  # Valor definido no banco
         except NumeroRequisicoes.DoesNotExist:
-            return Response({"error": "Número máximo de requisições para o turno matutino não definido."}, status=500)
+            return Response({"error": True, "message": "Número máximo de requisições para o turno matutino não definido."}, status=500)
 
             # 2.1 - Checa e remove todos os alunos reservados há mais de 30 segundos
         limite_tempo = timezone.now() - timedelta(seconds=31)
         AlunosReservados.objects.filter(
                 turno=turno, tempo_inicial__lt=limite_tempo).delete()
 
-            # 3. Verifica quantas pessoas estão atualmente na fila de reservados
+        # 3. Verifica quantas pessoas estão atualmente na fila de reservados
         total_reservados = AlunosReservados.objects.filter(turno=turno).count()
         if total_reservados < MAX_REQUISICOES:
                 # 4. Adiciona o usuário à fila de reservados
@@ -526,7 +553,7 @@ def reserva_turno(request):
                 )
             novo_aluno_reservado.save()
                 # Retorna mensagem de sucesso
-            return Response({"message": "Você foi adicionado à fila com sucesso!"})
+            return Response({"sucesss": True, "message": "Você foi adicionado à fila com sucesso!"}, status=200)
         else:
                 # Retorna erro se o limite for atingido
-                return Response({"error": "Muitos alunos estão tentando se matricular. Tente novamente mais tarde."}, status=429)
+                return Response({"error": True, "message": "Muitos alunos estão tentando se matricular. Tente novamente mais tarde."}, status=429)
