@@ -2,9 +2,7 @@
 import { ReservaTurno } from "@/actions/reservaTurno";
 import { useUser } from "@/context/userContext";
 import { Turma } from "@/types";
-import { useRouter } from 'next/navigation';  // Importa o hook useRouter
-
-
+import { useRouter } from "next/navigation"; // Importa o hook useRouter
 
 import {
 	Box,
@@ -26,7 +24,6 @@ const TURNOS = {
 	VES: "Vespertino",
 };
 
-
 const calculateTotalVagas = (turmas: Turma[]) =>
 	turmas.reduce((total, turma) => total + turma.capacidadeAtual, 0);
 
@@ -44,16 +41,15 @@ const TurnoCard = ({
 	turnoKey: string;
 }) => {
 	const isAluno = user?.role === "ALUNO";
-	const router = useRouter();  // Obtém a função de roteamento
+	const router = useRouter(); // Obtém a função de roteamento
 	const handleClick = async () => {
-
 		const result = await ReservaTurno(turnoKey);
-		console.log(result['data'])
-		let response = result['data']
-		if (response['error']) {
-			alert(response['error'])
+		console.log(result["data"]);
+		let response = result["data"];
+		if (response["error"]) {
+			alert(response["error"]);
 		} else {
-			router.push(`/matricula/turmas?turno=${turnoKey}`);  // Redireciona para a URL desejada
+			router.push(`/matricula/turmas?turno=${turnoKey}`); // Redireciona para a URL desejada
 		}
 	};
 	return (
@@ -84,13 +80,14 @@ const TurnoCard = ({
 					{turno}
 				</Typography>
 				<Typography variant="subtitle1" align="center" gutterBottom>
-					Vagas disponíveis: {totalVagas}
+					Total de vagas disponíveis: {totalVagas}
 				</Typography>
 				<Box sx={{ overflowY: "auto", maxHeight: 400 }}>
 					<Table stickyHeader>
 						<TableHead>
 							<TableRow>
 								<TableCell
+									align="center"
 									sx={{
 										fontWeight: "bold",
 										color: "var(--primary-dark)",
@@ -99,23 +96,12 @@ const TurnoCard = ({
 								>
 									TRILHA
 								</TableCell>
-								<TableCell
-									align="right"
-									sx={{
-										fontWeight: "bold",
-										color: "var(--primary-dark)",
-										backgroundColor: "var(--background-div)",
-									}}
-								>
-									VAGAS
-								</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
 							{turmas.map(({ id, trilha, capacidadeAtual }) => (
 								<TableRow key={id}>
-									<TableCell>{trilha}</TableCell>
-									<TableCell align="right">{capacidadeAtual}</TableCell>
+									<TableCell align="center">{trilha}</TableCell>
 								</TableRow>
 							))}
 						</TableBody>
