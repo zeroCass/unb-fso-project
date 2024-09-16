@@ -24,7 +24,8 @@ const TURNOS = {
 	VES: "Vespertino",
 };
 
-const calculateTotalVagas = (turmas: Turma[]) => turmas.reduce((total, turma) => total + turma.capacidadeAtual, 0);
+const calculateTotalVagas = (turmas: Turma[]) =>
+	turmas.reduce((total, turma) => total + turma.capacidadeAtual, 0);
 
 const TurnoCard = ({
 	turno,
@@ -53,7 +54,8 @@ const TurnoCard = ({
 		if (response.success) {
 			console.log("sucesso: ", response.turno, turnoKey);
 			if (response.turno === turnoKey || !response.turno)
-				router.push(`/matricula/turmas?turno=${turnoKey}`); // Redireciona para a URL desejada
+				router.push(`/matricula/turmas?turno=${turnoKey}`);
+			// Redireciona para a URL desejada
 			else alert(`Erro: Você possui reserva para o outro turno`);
 		}
 	};
@@ -149,7 +151,13 @@ export default function EscolhaTurno({ turmas }: { turmas: Turma[] }) {
 	}, [turmas]);
 
 	return (
-		<Grid container justifyContent="center" alignItems="center" spacing={4} style={{ height: "100vh" }}>
+		<Grid
+			container
+			justifyContent="center"
+			alignItems="center"
+			spacing={4}
+			style={{ height: "100vh" }}
+		>
 			<Grid item>
 				<TurnoCard
 					turno={TURNOS.MAT}
