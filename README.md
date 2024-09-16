@@ -22,7 +22,7 @@ No link abaixo encontra-se a prototipação no Figma das interfaces do projeto:
 
 ## Funcionalidades Principais:
 
-- **Cadastro de Alunos:** Os alunos se cadastram com seus CPFs para acessar o sistema.
+- **Cadastro de Alunos:** Os Admins cadastram os alunos com seus CPFs para que eles possam acessar o sistema.
 - **Escolha de Trilha:** O sistema apresenta as trilhas disponíveis com base nas vagas e turnos, permitindo que o aluno faça sua escolha.
 - **Gerenciamento de Vagas:** O sistema controla as vagas disponíveis em cada turma e trilha, evitando overbooking.
 - **Relatórios:** O administrador pode consultar um relatório completo das matrículas.
