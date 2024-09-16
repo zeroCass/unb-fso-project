@@ -4,6 +4,10 @@ import { getToken } from "@/lib/getToken";
 import { APIGenericResponse } from "@/types";
 import { cookies } from "next/headers";
 
+type APIResponse = APIGenericResponse & {
+	turno?: "MAT" | "VES";
+};
+
 // Função para calcular a diferença em segundos entre dois timestamps
 function calculateTimePassed(timestamp: string) {
 	const now = new Date();
@@ -13,7 +17,7 @@ function calculateTimePassed(timestamp: string) {
 	return differenceInSeconds;
 }
 
-export async function ReservaTurno(turnoKey: string): Promise<APIGenericResponse> {
+export async function ReservaTurno(turnoKey: string): Promise<APIResponse> {
 	const token = await getToken(); // Pega o token no servidor
 	if (!token) {
 		console.error("Token inválido");
@@ -39,15 +43,15 @@ export async function ReservaTurno(turnoKey: string): Promise<APIGenericResponse
 			console.warn("Time Remain: ", remainingTime);
 			cookies().set("matricula-timer", remainingTime.toString(), { maxAge: remainingTime });
 		} else {
-			console.warn("CARALHO CARALHO");
 			cookies().set("matricula-timer", "30", { maxAge: 30 });
 		}
 
 		console.log("Reserva data: ", data);
 		return {
 			message: data.message,
-			sucess: data.sucess ? true : false,
+			success: data.success ? true : false,
 			error: data.error ? true : false,
+			turno: data.turno,
 		};
 	} catch (err) {
 		console.error("Erro ao realizar a reserva:", err);

@@ -127,7 +127,7 @@ class Aluno(Usuario):
                     if menor_turma:
                         requisicoes_turno.valor = menor_turma.capacidadeAtual
                         requisicoes_turno.save()
-                return Response({"sucess": True, "message": "Aluno matriculado na turma " + str(turma.nome) +
+                return Response({"success": True, "message": "Aluno matriculado na turma " + str(turma.nome) +
                                                 " do Ano: " + str(turma.ano)}, status=200)
                 
 

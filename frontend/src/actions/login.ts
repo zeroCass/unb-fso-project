@@ -10,7 +10,7 @@ type fetchData = {
 };
 
 type Response = {
-	sucess: boolean;
+	success: boolean;
 	error: boolean;
 	message: string;
 };
@@ -22,7 +22,7 @@ export default async function login(state: {}, formData: FormData): Promise<Resp
 	const cpf = cpfData.replace(/[^\d]+/g, "");
 	if (!isValidCPF(cpf)) {
 		console.warn("CPF INVÁLIDO!!", cpf);
-		return { error: true, sucess: false, message: "CPF invalido" };
+		return { error: true, success: false, message: "CPF invalido" };
 	}
 
 	try {
@@ -50,8 +50,8 @@ export default async function login(state: {}, formData: FormData): Promise<Resp
 		// Save the session in a cookie
 		cookies().set("session", session, { expires, httpOnly: true });
 
-		return { sucess: true, error: false, message: "Login realizado com sucesso" };
+		return { success: true, error: false, message: "Login realizado com sucesso" };
 	} catch (error: unknown) {
-		return { sucess: false, error: true, message: String(error) };
+		return { success: false, error: true, message: String(error) };
 	}
 }

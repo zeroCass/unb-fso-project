@@ -15,7 +15,7 @@ export async function fetchPeriodoMatricula(): Promise<PeriodoMatricula | null> 
 		});
 		revalidatePath("/");
 		const data = await response.json();
-		return data.sucess ? data.data : null;
+		return data.success ? data.data : null;
 	} catch (err: unknown) {
 		console.warn(err);
 		throw new Error("Erro desconhecido");

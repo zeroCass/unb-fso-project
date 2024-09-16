@@ -18,7 +18,7 @@ export default async function inciarPeriodoMatricula(): Promise<APIResponse> {
 	});
 	const data = await response.json();
 	return {
-		sucess: data?.sucess ? true : false,
+		success: data?.success ? true : false,
 		error: data?.error ? true : false,
 		message: data.message,
 		turmas: data.turmas,

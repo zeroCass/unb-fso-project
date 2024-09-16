@@ -123,6 +123,8 @@ const AdminContent = ({ user, alunos }: { user: User | null; alunos: Aluno[] | n
 	const { periodo } = usePeriodoMatricula();
 	const dateFormatted = periodo ? formatDate(periodo.fim) : "";
 
+	console.log("periodo adm: ", periodo);
+
 	return (
 		<Box>
 			<Typography className={styles.title} sx={{ marginTop: "5rem", marginLeft: "2rem" }}>
@@ -146,18 +148,20 @@ const AdminContent = ({ user, alunos }: { user: User | null; alunos: Aluno[] | n
 				</>
 			)}
 
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-				}}
-			>
-				<Box className={styles.base_text} sx={{ marginTop: "10%" }}>
-					<p>Total de alunos cadastrados: {totalAlunos}</p>
-					<p>Total de alunos matriculados: {totalAlunosMatriculados}</p>
+			{periodo && (
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+					}}
+				>
+					<Box className={styles.base_text} sx={{ marginTop: "10%" }}>
+						<p>Total de alunos cadastrados: {totalAlunos}</p>
+						<p>Total de alunos matriculados: {totalAlunosMatriculados}</p>
+					</Box>
 				</Box>
-			</Box>
+			)}
 		</Box>
 	);
 };

@@ -68,7 +68,7 @@ export type Aluno = {
 };
 
 export type APIGenericResponse = {
-	sucess?: boolean;
+	success?: boolean;
 	error?: boolean;
 	message: string;
 	data?: any;

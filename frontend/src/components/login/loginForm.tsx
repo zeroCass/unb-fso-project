@@ -14,18 +14,18 @@ export default function LoginForm() {
 	const [cpf, setCpf] = useState("");
 	const router = useRouter();
 	const [state, action] = useFormState(login, {
-		sucess: false,
+		success: false,
 		error: false,
 		message: "",
 	});
 
 	useEffect(() => {
-		if (state.sucess) {
+		if (state.success) {
 			console.warn("estado com sucesso, redirecionando");
 			window.location.href = "/";
 			// router.push("/");
 		}
-	}, [state.sucess, router]);
+	}, [state.success, router]);
 
 	return (
 		<section className={styles.backgroundBox}>

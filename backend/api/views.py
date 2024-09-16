@@ -381,7 +381,7 @@ def consultar_periodo_matricula(request):
                 'fim': periodo.fim.isoformat(),
                 'status': periodo.status
             }
-            return Response({ 'sucess': True, 'message': 'Dados obtidos com sucesso!', 'data': data}, status=status.HTTP_200_OK)
+            return Response({ 'success': True, 'message': 'Dados obtidos com co!', 'data': data}, status=status.HTTP_200_OK)
         else:
             return Response({'error': True, 'message': 'Período de matrícula não definido.'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
@@ -522,7 +522,7 @@ def iniciar_periodo_matricula(request):  # view para geracao de turmas quando o 
                 turno='VES', valor=requisicoesVespertino)
             requisicoesVes.save()
 
-            return Response({"sucesso": True, "message": "Vagas Criadas com Sucesso!", "turmas": serializerTurmas.data}, status=status.HTTP_200_OK)
+            return Response({"success": True, "message": "Vagas Criadas com Sucesso!", "turmas": serializerTurmas.data}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({{'error': True,'message': f'Erro Interno: {str(e)}'}}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -566,7 +566,8 @@ def reserva_turno(request):
                     return Response({
                         "success": True,
                         "message": "Você já está na fila de reserva.",
-                        "tempo_inicial": tempo_inicial.isoformat()  # Returning the timestamp in ISO format
+                        "tempo_inicial": tempo_inicial.isoformat(),  # Returning the timestamp in ISO format
+                        "turno": aluno_reservado.turno
                     }, status=200)
                 else:
                     AlunosReservados.objects.filter(aluno=request.user.id).delete()
@@ -599,7 +600,7 @@ def reserva_turno(request):
                 )
             novo_aluno_reservado.save()
                 # Retorna mensagem de sucesso
-            return Response({"sucesss": True, "message": "Você foi adicionado à fila com sucesso!"}, status=200)
+            return Response({"success": True, "message": "Você foi adicionado à fila com sucesso!"}, status=200)
         else:
                 # Retorna erro se o limite for atingido
                 return Response({"error": True, "message": "Muitos alunos estão tentando se matricular. Tente novamente mais tarde."}, status=429)

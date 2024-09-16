@@ -17,7 +17,7 @@ export default async function matricular(turmaID: number): Promise<APIGenericRes
 	console.warn("Matricula: ", data);
 
 	return {
-		sucess: data?.sucess ? true : false,
+		success: data?.success ? true : false,
 		error: data?.error ? true : false,
 		message: data.message,
 	};

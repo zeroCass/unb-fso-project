@@ -46,8 +46,15 @@ const TurnoCard = ({
 		console.log(response.message);
 		if (response.error) {
 			alert(`Erro: ${response.message}`);
-		} else {
-			router.push(`/matricula/turmas?turno=${turnoKey}`); // Redireciona para a URL desejada
+		}
+
+		console.log(response.success, response.error);
+
+		if (response.success) {
+			console.log("sucesso: ", response.turno, turnoKey);
+			if (response.turno === turnoKey || !response.turno)
+				router.push(`/matricula/turmas?turno=${turnoKey}`); // Redireciona para a URL desejada
+			else alert(`Erro: Você possui reserva para o outro turno`);
 		}
 	};
 	return (
