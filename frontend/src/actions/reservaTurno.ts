@@ -2,9 +2,10 @@
 
 import { getToken } from "@/lib/getToken";
 import { APIGenericResponse } from "@/types";
+import { cookies } from "next/headers";
 
 // Função para calcular a diferença em segundos entre dois timestamps
-function calculateRemainingSeconds(timestamp: string) {
+function calculateTimePassed(timestamp: string) {
 	const now = new Date();
 	const initialTime = new Date(timestamp);
 	const differenceInMilliseconds = now.getTime() - initialTime.getTime();
@@ -33,8 +34,13 @@ export async function ReservaTurno(turnoKey: string): Promise<APIGenericResponse
 
 		const data = await response.json();
 		if (data.tempo_inicial) {
-			const remainingTime = calculateRemainingSeconds(data.tempo_inicial);
+			const timePassed = calculateTimePassed(data.tempo_inicial);
+			const remainingTime = 30 - timePassed;
 			console.warn("Time Remain: ", remainingTime);
+			cookies().set("matricula-timer", remainingTime.toString(), { maxAge: remainingTime });
+		} else {
+			console.warn("CARALHO CARALHO");
+			cookies().set("matricula-timer", "30", { maxAge: 30 });
 		}
 
 		console.log("Reserva data: ", data);
@@ -50,26 +56,25 @@ export async function ReservaTurno(turnoKey: string): Promise<APIGenericResponse
 }
 
 export async function desfazerReserva() {
-  const token = await getToken();  // Pega o token no servidor
-  if (!token) {
-    console.error("Token inválido");
-    return { error: "Token inválido" };
-  }
+	const token = await getToken(); // Pega o token no servidor
+	if (!token) {
+		console.error("Token inválido");
+		return { error: "Token inválido" };
+	}
 
-  try {
-    const response = await fetch(`${process.env.DJANGO_API}/api/desfazer-reserva/`, {
-      method: "GET",
-      headers: {
-        Authorization: `Token ${token}`,
-        "Content-Type": "application/json",
-      }
-    });
-	
+	try {
+		const response = await fetch(`${process.env.DJANGO_API}/api/desfazer-reserva/`, {
+			method: "GET",
+			headers: {
+				Authorization: `Token ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
 
-    const data = await response.json();
-    console.log("Aluno retirado da fila de reservados:", data);
-    return { message: "Aluno retirado da fila de reservados", data };
-  } catch (err) {
-    return { error: "Erro ao realizar a operação" };
-  }
+		const data = await response.json();
+		console.log("Aluno retirado da fila de reservados:", data);
+		return { message: "Aluno retirado da fila de reservados", data };
+	} catch (err) {
+		return { error: "Erro ao realizar a operação" };
+	}
 }
