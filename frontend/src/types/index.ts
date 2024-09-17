@@ -1,6 +1,6 @@
 export type Session = {
 	token: string;
-	user: { id: number; role: "ADMIN" | "ALUNO" };
+	user: User;
 	expires: string; //ISO 8601 date string
 	iat: number;
 	exp: number;
@@ -65,4 +65,22 @@ export type Aluno = {
 	nome: string;
 	role: "ALUNO";
 	turma: number | null;
+};
+
+export type APIGenericResponse = {
+	success?: boolean;
+	error?: boolean;
+	message: string;
+	data?: any;
+};
+
+export type PeriodoMatricula = {
+	inicio: Date;
+	fim: Date;
+	status: "EM_ANDAMENTO" | "FINALIZADO";
+};
+
+export type IPeriodoMatriculaContext = {
+	periodo: PeriodoMatricula | null;
+	setPeriodo: React.Dispatch<React.SetStateAction<PeriodoMatricula | null>>;
 };

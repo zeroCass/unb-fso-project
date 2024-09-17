@@ -1,57 +1,84 @@
 "use server";
 
 import { getToken } from "@/lib/getToken";
+import { APIGenericResponse } from "@/types";
+import { cookies } from "next/headers";
 
-export async function ReservaTurno(turnoKey: string) {
-  const token = await getToken();  // Pega o token no servidor
-  if (!token) {
-    console.error("Token inválido");
-    return { error: "Token inválido" };
-  }
+type APIResponse = APIGenericResponse & {
+	turno?: "MAT" | "VES";
+};
 
-  try {
-    const response = await fetch(`${process.env.DJANGO_API}/api/reserva-turno/`, {
-      method: "POST",
-      headers: {
-        Authorization: `Token ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        turno: turnoKey,
-      }),
-    });
-	
+// Função para calcular a diferença em segundos entre dois timestamps
+function calculateTimePassed(timestamp: string) {
+	const now = new Date();
+	const initialTime = new Date(timestamp);
+	const differenceInMilliseconds = now.getTime() - initialTime.getTime();
+	const differenceInSeconds = Math.max(-1, Math.floor(differenceInMilliseconds / 1000));
+	return differenceInSeconds;
+}
 
-    const data = await response.json();
-    console.log("Reserva realizada com sucesso:", data);
-    return { message: "Reserva realizada com sucesso", data };
-  } catch (err) {
-    console.error("Erro 'ao realizar a reserva':", err);
-    return { error: "Erro 'ao realizar a reserva'" };
-  }
+export async function ReservaTurno(turnoKey: string): Promise<APIResponse> {
+	const token = await getToken(); // Pega o token no servidor
+	if (!token) {
+		console.error("Token inválido");
+		return { error: true, message: "Token inválido" };
+	}
+
+	try {
+		const response = await fetch(`${process.env.DJANGO_API}/api/reserva-turno/`, {
+			method: "POST",
+			headers: {
+				Authorization: `Token ${token}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				turno: turnoKey,
+			}),
+		});
+
+		const data = await response.json();
+		if (data.tempo_inicial) {
+			const timePassed = calculateTimePassed(data.tempo_inicial);
+			const remainingTime = 30 - timePassed;
+			console.warn("Time Remain: ", remainingTime);
+			cookies().set("matricula-timer", remainingTime.toString(), { maxAge: remainingTime });
+		} else {
+			cookies().set("matricula-timer", "30", { maxAge: 30 });
+		}
+
+		console.log("Reserva data: ", data);
+		return {
+			message: data.message,
+			success: data.success ? true : false,
+			error: data.error ? true : false,
+			turno: data.turno,
+		};
+	} catch (err) {
+		console.error("Erro ao realizar a reserva:", err);
+		return { error: true, message: "Erro ao realizar a reserva" };
+	}
 }
 
 export async function desfazerReserva() {
-  const token = await getToken();  // Pega o token no servidor
-  if (!token) {
-    console.error("Token inválido");
-    return { error: "Token inválido" };
-  }
+	const token = await getToken(); // Pega o token no servidor
+	if (!token) {
+		console.error("Token inválido");
+		return { error: "Token inválido" };
+	}
 
-  try {
-    const response = await fetch(`${process.env.DJANGO_API}/api/desfazer-reserva/`, {
-      method: "GET",
-      headers: {
-        Authorization: `Token ${token}`,
-        "Content-Type": "application/json",
-      }
-    });
-	
+	try {
+		const response = await fetch(`${process.env.DJANGO_API}/api/desfazer-reserva/`, {
+			method: "GET",
+			headers: {
+				Authorization: `Token ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
 
-    const data = await response.json();
-    console.log("Aluno retirado da fila de reservados:", data);
-    return { message: "Aluno retirado da fila de reservados", data };
-  } catch (err) {
-    return { error: "Erro ao realizar a operação" };
-  }
+		const data = await response.json();
+		console.log("Aluno retirado da fila de reservados:", data);
+		return { message: "Aluno retirado da fila de reservados", data };
+	} catch (err) {
+		return { error: "Erro ao realizar a operação" };
+	}
 }

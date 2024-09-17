@@ -1,16 +1,8 @@
 "use client";
 
 import registerAluno from "@/actions/registerAluno";
-import {
-	Box,
-	Button,
-	Container,
-	IconButton,
-	Modal,
-	TextField,
-	Typography,
-} from "@mui/material";
 import SyncIcon from "@mui/icons-material/Sync";
+import { Box, Button, Container, IconButton, Modal, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
@@ -95,34 +87,28 @@ export default function Cadastro() {
 	});
 	const router = useRouter();
 	const [state, action] = useFormState(registerAluno, {
-		sucess: false,
+		success: false,
 		error: false,
 		message: "",
 	});
 
 	useEffect(() => {
 		console.log("effect");
-		if (state.sucess) {
+		if (state.success) {
 			handleOpenModal({ message: state.message, action: "redirect" });
 		}
 
-		if (!state.sucess && state.error) {
+		if (!state.success && state.error) {
 			handleOpenModal({ message: state.message, action: "none" });
 		}
-	}, [state.sucess, router, state.error, state.message]);
+	}, [state.success, router, state.error, state.message]);
 
 	const generatePassword = () => {
 		const password = "123";
 		setPassword(password);
 	};
 
-	const handleOpenModal = ({
-		message,
-		action,
-	}: {
-		message: string;
-		action: "redirect" | "none";
-	}) => {
+	const handleOpenModal = ({ message, action }: { message: string; action: "redirect" | "none" }) => {
 		setModalConfig({
 			message,
 			action,
@@ -141,11 +127,7 @@ export default function Cadastro() {
 
 	return (
 		<>
-			<FeedbackModal
-				open={open}
-				modalConfig={modalConfig}
-				handleCloseModal={handleCloseModal}
-			/>
+			<FeedbackModal open={open} modalConfig={modalConfig} handleCloseModal={handleCloseModal} />
 
 			<Container maxWidth="md">
 				<Box
@@ -157,12 +139,7 @@ export default function Cadastro() {
 						backgroundColor: "#f5f5f5",
 					}}
 				>
-					<Typography
-						variant="h5"
-						align="center"
-						sx={{ fontFamily: "var(--fontTitle)" }}
-						gutterBottom
-					>
+					<Typography variant="h5" align="center" sx={{ fontFamily: "var(--fontTitle)" }} gutterBottom>
 						Cadastrar Aluno
 					</Typography>
 
@@ -174,24 +151,11 @@ export default function Cadastro() {
 						noValidate
 						autoComplete="off"
 					>
-						<TextField
-							name="nome"
-							label="Nome"
-							variant="outlined"
-							required
-							fullWidth
-						/>
+						<TextField name="nome" label="Nome" variant="outlined" required fullWidth />
 
 						<CpfInput value={cpf} onChange={setCpf} />
 
-						<TextField
-							name="email"
-							label="E-mail"
-							type="email"
-							variant="outlined"
-							required
-							fullWidth
-						/>
+						<TextField name="email" label="E-mail" type="email" variant="outlined" required fullWidth />
 
 						<Box sx={{ display: "flex", alignItems: "center" }}>
 							<TextField
@@ -223,12 +187,7 @@ export default function Cadastro() {
 							>
 								Voltar
 							</Button>
-							<Button
-								variant="contained"
-								color="primary"
-								type="submit"
-								sx={{ minWidth: "150px" }}
-							>
+							<Button variant="contained" color="primary" type="submit" sx={{ minWidth: "150px" }}>
 								Cadastrar
 							</Button>
 						</Box>

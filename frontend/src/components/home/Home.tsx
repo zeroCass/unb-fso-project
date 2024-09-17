@@ -1,5 +1,7 @@
 "use client";
 
+import inciarPeriodoMatricula from "@/actions/inicarPeriodoMatricula";
+import { usePeriodoMatricula } from "@/context/PeriodoMatriculaContext";
 import { useUser } from "@/context/userContext";
 import { Aluno, Turma, User } from "@/types";
 import { Box, Container, Typography } from "@mui/material";
@@ -11,15 +13,40 @@ type UserRole = {
 	role: "ADMIN" | "ALUNO";
 };
 
+function formatDate(date: Date) {
+	return date.toLocaleString("pt-BR", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+	});
+}
+
 function CustomButton({ role }: UserRole) {
 	const router = useRouter();
+
+	const getPeriodoMatricula = async () => {
+		await inciarPeriodoMatricula();
+		window.location.href = "/";
+	};
+
+	const getTurnos = () => {
+		router.push("/matricula/turnos");
+	};
+
 	return (
 		<>
 			{role === "ALUNO" ? (
-				<button onClick={() => router.push("/matricula/turnos")} className={styles.button_styled}>
+				<button onClick={() => getTurnos()} className={styles.button_styled}>
 					Clique Aqui
 				</button>
-			) : null}
+			) : (
+				<button onClick={getPeriodoMatricula} className={styles.button_styled}>
+					Clique Aqui
+				</button>
+			)}
 		</>
 	);
 }
@@ -27,25 +54,38 @@ function CustomButton({ role }: UserRole) {
 const HomeImage = () => {
 	return (
 		<Box sx={{ justifyContent: "center", marginTop: "8.5rem" }}>
-			<Image src="/images/undraw_studying.svg" alt="Estudando" width={600} height={600} />
+			<Image
+				src="/images/undraw_studying.svg"
+				alt="Estudando"
+				width={600}
+				height={600}
+			/>
 		</Box>
 	);
 };
 
 const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 	const isMatriculado = Boolean(turma);
+	const { periodo } = usePeriodoMatricula();
+
+	console.log("perioso de matricula: ", periodo);
 
 	return (
 		<Box>
-			<Typography className={styles.title} sx={{ marginTop: "5rem", marginLeft: "2rem" }}>
+			<Typography
+				className={styles.title}
+				sx={{ marginTop: "5rem", marginLeft: "2rem" }}
+			>
 				Olá, <br /> {user?.nome}.
 			</Typography>
 
 			<Typography className={styles.base_text} sx={{ marginLeft: "2rem" }}>
-				{!isMatriculado ? "Você não está matriculado ainda." : "Você está matriculado na trilha"}
+				{!isMatriculado
+					? "Você não está matriculado ainda."
+					: "Você está matriculado na trilha"}
 			</Typography>
 
-			{!isMatriculado ? (
+			{!isMatriculado && periodo?.status === "EM_ANDAMENTO" && (
 				<Box
 					sx={{
 						display: "flex",
@@ -55,11 +95,33 @@ const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 					}}
 				>
 					<CustomButton role={user.role} />
-					<Typography className={styles.base_text} sx={{ marginTop: "-1.5rem" }}>
+					<Typography
+						className={styles.base_text}
+						sx={{ marginTop: "-1.5rem" }}
+					>
 						para se matricular
 					</Typography>
 				</Box>
-			) : (
+			)}
+
+			{!isMatriculado && (!periodo || periodo.status === "FINALIZADO") && (
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						marginTop: "15%",
+					}}
+				>
+					<Typography
+						className={styles.base_text}
+						sx={{ marginTop: "-1.5rem" }}
+					>
+						Não estamos no período de matrícula
+					</Typography>
+				</Box>
+			)}
+			{isMatriculado && (
 				<Box
 					sx={{
 						display: "flex",
@@ -78,37 +140,91 @@ const AlunoContent = ({ user, turma }: { user: User; turma: Turma | null }) => {
 	);
 };
 
-const AdminContent = ({ user, alunos }: { user: User | null; alunos: Aluno[] | null }) => {
+const AdminContent = ({
+	user,
+	alunos,
+}: {
+	user: User | null;
+	alunos: Aluno[] | null;
+}) => {
 	const totalAlunos = alunos?.length || 0;
-	const totalAlunosMatriculados = alunos?.reduce((count, aluno) => (aluno.turma ? count + 1 : count), 0);
+	const totalAlunosMatriculados = alunos?.reduce(
+		(count, aluno) => (aluno.turma ? count + 1 : count),
+		0
+	);
+	const { periodo } = usePeriodoMatricula();
+	const dateFormatted =
+		periodo && periodo.fim ? formatDate(new Date(periodo.fim)) : "";
+
+	console.log("periodo adm: ", periodo);
 
 	return (
 		<Box>
-			<Typography className={styles.title} sx={{ marginTop: "5rem", marginLeft: "2rem" }}>
+			<Typography
+				className={styles.title}
+				sx={{ marginTop: "5rem", marginLeft: "2rem" }}
+			>
 				Olá ADM <br /> {user?.nome}.
 			</Typography>
 
-			<Typography className={styles.styled_text} sx={{ marginLeft: "2rem", marginTop: "2rem" }}>
-				Verifique o status do período de matrícula.
-			</Typography>
+			{periodo?.status === "EM_ANDAMENTO" ? (
+				<>
+					<Typography className={styles.base_text} sx={{ marginLeft: "2rem" }}>
+						Periodo de matricula em andamento. Término:
+					</Typography>
 
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-				}}
-			>
-				<Box className={styles.base_text} sx={{ marginTop: "10%" }}>
-					<p>Total de alunos cadastrados: {totalAlunos}</p>
-					<p>Total de alunos matriculados: {totalAlunosMatriculados}</p>
-				</Box>
-			</Box>
+					<Typography className={styles.styled_text}>
+						{dateFormatted}
+					</Typography>
+
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "center",
+						}}
+					>
+						<Box className={styles.base_text} sx={{ marginTop: "10%" }}>
+							<p>Total de alunos cadastrados: {totalAlunos}</p>
+							<p>Total de alunos matriculados: {totalAlunosMatriculados}</p>
+						</Box>
+					</Box>
+				</>
+			) : (
+				<>
+					<Typography className={styles.base_text} sx={{ marginLeft: "2rem" }}>
+						Fora do período de matrícula.
+					</Typography>
+
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "center",
+							marginTop: "15%",
+						}}
+					>
+						<CustomButton role={"ADMIN"} />
+						<Typography
+							className={styles.base_text}
+							sx={{ marginTop: "-1.5rem" }}
+						>
+							para inciar o período de matrícula
+						</Typography>
+					</Box>
+				</>
+			)}
 		</Box>
 	);
 };
 
-export default function Home({ turma, alunos }: { turma: Turma | null; alunos: Aluno[] | null }) {
+export default function Home({
+	turma,
+	alunos,
+}: {
+	turma: Turma | null;
+	alunos: Aluno[] | null;
+}) {
 	const { user } = useUser();
 
 	return (
@@ -129,7 +245,9 @@ export default function Home({ turma, alunos }: { turma: Turma | null; alunos: A
 					}}
 				>
 					{user?.role === "ALUNO" && <AlunoContent user={user} turma={turma} />}
-					{user?.role === "ADMIN" && <AdminContent user={user} alunos={alunos} />}
+					{user?.role === "ADMIN" && (
+						<AdminContent user={user} alunos={alunos} />
+					)}
 				</Box>
 
 				<Box

@@ -1,10 +1,10 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.db import models
+from django.db import models, transaction
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework.response import Response
-from django.db import transaction
-from django.utils import timezone
-from datetime import timedelta
 
 from .managers import UsuarioManager
 
@@ -74,8 +74,8 @@ class Aluno(Usuario):
         # Checa se aluno já está matriculado
         if self.turma:
             turma = Turma.objects.get(id=turma_id)
-            return Response(data={"error": "Aluno já está matriculado na turma: " + str(turma.nome) +
-                                        " do Turno: " + str(turma.turno)}, status=200)
+            return Response({"error": True, "message": "Aluno já está matriculado na turma: " + str(turma.nome) +
+                                        " do Turno: " + str(turma.turno)}, status=400)
 
         # Inicia uma transação atômica
         with transaction.atomic():
@@ -92,9 +92,9 @@ class Aluno(Usuario):
                 if tempo_atual > limite_tempo:
                     # Se passou do tempo, remove o aluno da fila e impede matrícula
                     aluno_reservado.delete()
-                    return Response(data={"error": "Tempo de reserva expirado. Matrícula não realizada."}, status=200)
+                    return Response({"error": True, "message": "Tempo de reserva expirado. Matrícula não realizada."}, status=400)
             except AlunosReservados.DoesNotExist:
-                return Response(data={"error": "Aluno não está autorizado para matrícula."}, status=200)
+                return Response({"error": True, "message": "Aluno não está autorizado para matrícula."}, status=400)
 
             try:
                 # Tenta encontrar a turma com o ID fornecido
@@ -111,7 +111,8 @@ class Aluno(Usuario):
 
                     # Remove o aluno da fila após matrícula bem-sucedida
                     aluno_reservado.delete()
-
+                else:
+                    return Response({"error": True, "message": "Turma está cheia."}, status=400)
                 # Ajusta o valor de NumeroRequisicoes com base nas vagas restantes
                 requisicoes_turno = NumeroRequisicoes.objects.select_for_update().get(turno=turma.turno)
                 
@@ -126,13 +127,12 @@ class Aluno(Usuario):
                     if menor_turma:
                         requisicoes_turno.valor = menor_turma.capacidadeAtual
                         requisicoes_turno.save()
-                    return Response(data={"message": "Aluno matriculado na turma " + str(turma.nome) +
+                return Response({"success": True, "message": "Aluno matriculado na turma " + str(turma.nome) +
                                                 " do Ano: " + str(turma.ano)}, status=200)
-                else:
-                    return Response(data={"error": "Turma está cheia."}, status=200)
+                
 
             except Turma.DoesNotExist:
-                return Response(data={"error": "Turma não encontrada."}, status=200)
+                return Response({"error": True, "message":"Turma não encontrada."}, status=404)
 
 
 class Turma(models.Model):
@@ -172,3 +172,35 @@ class AlunosReservados(models.Model):
         'Aluno', on_delete=models.CASCADE)
     tempo_inicial = models.DateTimeField(auto_now_add=True) # sempre salva com o momento inicial da requisicao
     turno = models.CharField(max_length=3, choices=Turno.choices)
+
+    def __str__(self):
+        return f"{self.aluno} ({self.tempo_inicial}) - {self.turno}"
+    
+
+class PeriodoMatricula(models.Model):
+    STATUS_CHOICES = [
+        ('EM_ANDAMENTO', 'Em andamento'),
+        ('FINALIZADO', 'Finalizado'),
+    ]
+
+    inicio = models.DateTimeField(default=timezone.now)
+    fim = models.DateTimeField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='EM_ANDAMENTO')
+
+    @classmethod
+    def iniciar_periodo(cls, horas=24):
+        """Inicia ou atualiza o período de matrícula."""
+        inicio = timezone.now()
+        fim = inicio + timezone.timedelta(hours=horas)
+        cls.objects.update_or_create(
+            defaults={'inicio': inicio, 'fim': fim, 'status': 'EM_ANDAMENTO'}
+        )
+
+    @classmethod
+    def finalizar_periodo(cls):
+        """Finaliza o período de matrícula."""
+        agora = timezone.now()
+        cls.objects.update(fim=agora, status='FINALIZADO')
+
+    def __str__(self):
+        return f"Início: {self.inicio}, Fim: {self.fim}"

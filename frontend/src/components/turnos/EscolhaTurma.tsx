@@ -43,13 +43,20 @@ const TurnoCard = ({
 	const isAluno = user?.role === "ALUNO";
 	const router = useRouter(); // Obtém a função de roteamento
 	const handleClick = async () => {
-		const result = await ReservaTurno(turnoKey);
-		console.log(result["data"]);
-		let response = result["data"];
-		if (response["error"]) {
-			alert(response["error"]);
-		} else {
-			router.push(`/matricula/turmas?turno=${turnoKey}`); // Redireciona para a URL desejada
+		const response = await ReservaTurno(turnoKey);
+		console.log(response.message);
+		if (response.error) {
+			alert(`Erro: ${response.message}`);
+		}
+
+		console.log(response.success, response.error);
+
+		if (response.success) {
+			console.log("sucesso: ", response.turno, turnoKey);
+			if (response.turno === turnoKey || !response.turno)
+				router.push(`/matricula/turmas?turno=${turnoKey}`);
+			// Redireciona para a URL desejada
+			else alert(`Erro: Você possui reserva para o outro turno`);
 		}
 	};
 	return (

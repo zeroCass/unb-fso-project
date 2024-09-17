@@ -34,5 +34,18 @@ export async function middleware(request: NextRequest) {
 		return NextResponse.redirect(new URL(previousUrl, request.nextUrl));
 	}
 
+	const isAuthToMatricular = user?.role === "ALUNO" && !user?.turma;
+	const matriculaRoute = /^\/matricula\/turmas(\/|\?.*)?$/;
+
+	if (isAuth && matriculaRoute.test(currentPath) && isAuthToMatricular) {
+		//do something
+		console.log("habilitado a se matricular: ", user);
+	}
+
+	if (isAuth && matriculaRoute.test(currentPath) && !isAuthToMatricular) {
+		console.log("usuario nao habilitado para se matricular");
+		return NextResponse.redirect(new URL("/", request.nextUrl));
+	}
+
 	return NextResponse.next();
 }
