@@ -15,6 +15,7 @@ O Projeto tem como objetivo automatizar o processo de escolha de trilhas e matr�
 ## Documentação
 
 Dentro da pasta docs do repositório, você encontrará os slides correspondentes a cada sprint de entrega, o diagrama ER, o diagrama de casos de uso e o diagrama de classes. Além de mais informações sobre a instalação e requisitos do projeto.
+É essencial consultar as documentações do [front](https://github.com/zeroCass/unb-fso-project/blob/main/docs/FRONTEND.md) e do [backend](https://github.com/zeroCass/unb-fso-project/blob/main/docs/BACKEND.md).
 
 ### Figma
 No link abaixo encontra-se a prototipação no Figma das interfaces do projeto:
