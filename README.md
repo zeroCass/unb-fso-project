@@ -70,7 +70,7 @@ py manage.py createsuperuser
 Download pacotes necessários
 
 ```bash
-    npm instal
+    npm install
 ```
 - Crie e configure o arquivo .env de acordo com exemplo: .env.sample 
 
