@@ -18,8 +18,9 @@ Dentro da pasta docs do repositório, você encontrará os slides correspondente
 É essencial consultar as documentações do [front](https://github.com/zeroCass/unb-fso-project/blob/main/docs/FRONTEND.md) e do [backend](https://github.com/zeroCass/unb-fso-project/blob/main/docs/BACKEND.md).
 
 ### Figma
-No link abaixo encontra-se a prototipação no Figma das interfaces do projeto:
- - [Figma](https://www.figma.com/design/2OjQVrDtwqiOjIl23i0s80/FSO-Project?node-id=0-1&t=XmIpIHWNanxcVzIW-1)
+Abaixo encontra-se o link da prototipação no Figma das interfaces do projeto:
+
+[![Figma](https://img.shields.io/badge/Figma-696969?style=for-the-badge&logo=figma&logoColor=figma)](https://www.figma.com/design/2OjQVrDtwqiOjIl23i0s80/FSO-Project?node-id=0-1&t=XmIpIHWNanxcVzIW-1)
 
 ## Funcionalidades Principais:
 
